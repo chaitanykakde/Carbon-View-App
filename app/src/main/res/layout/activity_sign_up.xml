@@ -64,7 +64,7 @@
                 android:id="@+id/nameField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Full Name"
+                android:hint="Company Name"
                 android:inputType="textPersonName"
                 android:maxLength="50"
                 android:drawableLeft="@drawable/sperson"
@@ -100,43 +100,36 @@
         android:layout_marginBottom="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ageField"
+            android:id="@+id/emailField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Age"
-            android:drawableLeft="@drawable/calendar"
+            android:hint="Company Email"
+            android:drawableLeft="@drawable/mail"
             android:drawableTint="@color/gray"
             android:drawablePadding="10dp"
-            android:inputType="number"/>
+            android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Gender Field with Dropdown -->
+
+
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/genderInputLayout"
+            android:id="@+id/sizeInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Gender"
-            app:startIconDrawable="@drawable/sperson"
+            android:layout_marginBottom="16dp">
 
-            app:endIconMode="dropdown_menu"
-            android:drawableTint="@color/gray"
-            android:paddingVertical="4dp">
-
-            <AutoCompleteTextView
-                android:id="@+id/genderField"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/sizeField"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp"
-                android:paddingStart="48dp"
-                android:textSize="16sp"
-                android:background="?android:attr/editTextBackground"
-                android:inputType="none"
-                android:focusable="false"/>
+                android:layout_height="wrap_content"
+                android:hint="No of Employees"
+
+                android:drawableLeft="@drawable/size"
+                android:drawablePadding="10dp"
+                android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
-
-
-
         <!-- Location Field -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/locationInputLayout"
@@ -196,6 +189,8 @@
         android:drawableTint="@color/white"
         android:paddingHorizontal="100sp"
         android:layout_margin="10dp"/>
+
+
 
 
         <TextView
