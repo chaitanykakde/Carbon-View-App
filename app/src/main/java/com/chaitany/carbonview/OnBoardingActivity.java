@@ -20,32 +20,33 @@ public class OnBoardingActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
 
     private final int[] images = {
-            R.drawable.img_onboard2,
-            R.drawable.img_onboard1,
-            R.drawable.onboarding4,
-            R.drawable.img_onboard3,
-            R.drawable.img_onboard5,
-            R.drawable.img_onboard6
+            R.drawable.onboarding2,
+            R.drawable.onboarding3,
+            R.drawable.onboarding4
     };
 
     private final String[] titles = {
-            "A Smarter Way to Care for Those Who Matter Most!",
-           "Help at Your Fingertips!",
-            "Find the Nearest Hospital Instantly!",
-            "Never Miss a Dose or Checkup!",
-            "Stay Active & Manage Your Day with Ease!",
-            "Stay Connected with Loved Ones!"
+            "Track Carbon Emissions \n" +
+                    "in Real-Time",
+            "Get Actionable Insights\n" +
+                    "& Reports",
+            "Reduce Emissions with\n" +
+                    "AI-Powered Suggestions"
     };
 
     private final String[] descriptions = {
-            "Smart technology meets heartfelt care – ensuring safety, health, and well-being for seniors, effortlessly.",
-            "One-tap SOS alert to caregivers & real-time emergency support.",
-            "Locate nearby hospitals and get turn-by-turn navigation in emergencies.",
-            "Smart medication reminders, BMI tracking, and doctor visit alerts.",
-            "Personalized exercise routines, meal plans, and daily task management.",
-            "Community chat, and social groups to combat loneliness."
+            "CarbonView categorizes emissions\n" +
+                    " into Scope 1, 2, and 3 using data\n" +
+                    "from energy logs, IoT sensors, \n" +
+                    "and manual inputs.",
+            "Gain deeper insights into your\n" +
+                    "carbon footprint with interactive\n" +
+                    "dashboards, custom reports, and\n" +
+                    "sustainability tracking.",
+            "Leverage AI-driven recommendations\n" +
+                    "to reduce emissions and achieve\n" +
+                    "sustainability goals."
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

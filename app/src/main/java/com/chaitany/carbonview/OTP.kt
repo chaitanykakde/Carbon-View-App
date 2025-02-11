@@ -21,8 +21,8 @@ class OTP: AppCompatActivity() {
     private lateinit var sentOtp: String
     private lateinit var mobile: String
     private lateinit var name: String
-    private lateinit var age: String
-    private lateinit var gender: String
+    private lateinit var email: String
+    private lateinit var size: String
     private lateinit var location: String
     private lateinit var password: String
 
@@ -38,8 +38,8 @@ class OTP: AppCompatActivity() {
         sentOtp = intent.getStringExtra("otp") ?: ""
         mobile = intent.getStringExtra("mobile") ?: ""
         name = intent.getStringExtra("name") ?: ""
-        age = intent.getStringExtra("age") ?: ""
-        gender = intent.getStringExtra("gender") ?: ""
+        email = intent.getStringExtra("email") ?: ""
+        size = intent.getStringExtra("size") ?: ""
         location = intent.getStringExtra("location") ?: ""
         password = intent.getStringExtra("password") ?: ""
 
@@ -57,7 +57,7 @@ class OTP: AppCompatActivity() {
 
     private fun saveUserToDatabase() {
         progressBar.visibility = View.VISIBLE
-        val user = User(name, mobile, age, gender, location, password)
+        val user = User(name, mobile, email, size, location, password)
 
         val userRef = database.child("users").child(mobile)
         userRef.setValue(user).addOnCompleteListener { task ->

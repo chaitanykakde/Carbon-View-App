@@ -93,8 +93,8 @@ class Login : AppCompatActivity() {
                         // Save all user details
                         editor.putString("name", user.child("name").value.toString())
                         editor.putString("mobile", mobile)
-                        editor.putString("age", user.child("age").value.toString())
-                        editor.putString("gender", user.child("gender").value.toString())
+                        editor.putString("email", user.child("email").value.toString())
+                        editor.putString("size", user.child("size").value.toString())
                         editor.putString("location", user.child("location").value.toString())
 
                         // Store isLogged as true

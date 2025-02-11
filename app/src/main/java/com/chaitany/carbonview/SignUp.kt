@@ -28,15 +28,15 @@ class SignUp : AppCompatActivity() {
 
     private lateinit var nameField: TextInputEditText
     private lateinit var mobileField: TextInputEditText
-    private lateinit var ageField: TextInputEditText
-    private lateinit var genderField: AutoCompleteTextView
+    private lateinit var sizeField: TextInputEditText
+    private lateinit var emailField: TextInputEditText
     private lateinit var locationField: TextInputEditText
     private lateinit var passwordField: TextInputEditText
     private lateinit var signupButton: MaterialButton
     private lateinit var progressBar: ProgressBar
     private lateinit var loginButton:MaterialButton
     private val REQUEST_CODE_SEND_SMS = 101
-    private lateinit var genderOptions:ArrayAdapter<String>
+
 
 
     private lateinit var database: DatabaseReference
@@ -48,8 +48,8 @@ class SignUp : AppCompatActivity() {
         // Initialize views
         nameField = findViewById(R.id.nameField)
         mobileField = findViewById(R.id.mobileField)
-        ageField = findViewById(R.id.ageField)
-        genderField = findViewById(R.id.genderField)
+        sizeField = findViewById(R.id.sizeField)
+        emailField = findViewById(R.id.emailField)
         locationField = findViewById(R.id.locationField)
         passwordField = findViewById(R.id.passwordField)
         signupButton = findViewById(R.id.signupButton)
@@ -60,14 +60,10 @@ class SignUp : AppCompatActivity() {
 
         val cbShowPassword = findViewById<CheckBox>(R.id.cbShowPassword)
 
-        val genderOptions = arrayOf("Male", "Female", "Other")
+
 
 // Create an adapter and set it to AutoCompleteTextView
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genderOptions)
-        genderField.setAdapter(adapter)
-        genderField.setOnClickListener {
-            genderField.showDropDown()
-        }
+
 
         cbShowPassword.setOnCheckedChangeListener { _, isChecked ->
             togglePasswordVisibility(passwordField, isChecked)
@@ -75,12 +71,12 @@ class SignUp : AppCompatActivity() {
         signupButton.setOnClickListener {
             val name = nameField.text.toString().trim()
             val mobile = mobileField.text.toString().trim()
-            val age = ageField.text.toString().trim()
-            val gender = genderField.text.toString().trim()
+            val email = emailField.text.toString().trim()
+            val size = sizeField.text.toString().trim()
             val location = locationField.text.toString().trim()
             val password = passwordField.text.toString().trim()
 
-            if (validateFields(nameField, mobileField, ageField, genderField, locationField, passwordField, progressBar)) {
+            if (validateFields(nameField, mobileField, emailField, sizeField, locationField, passwordField, progressBar)) {
                 progressBar.visibility = View.VISIBLE
                 checkIfUserExists(mobile) { exists ->
                     if (exists) {
@@ -89,7 +85,7 @@ class SignUp : AppCompatActivity() {
                     } else {
                         val otp = generateOtp()
                         sendOtpToUser(mobile, otp) // Send OTP to user
-                        openOtpActivity(mobile, otp, name, age, gender, location, password) // Open OTP activity
+                        openOtpActivity(mobile, otp, name, email, size, location, password) // Open OTP activity
                     }
                 }
             }
@@ -171,8 +167,8 @@ class SignUp : AppCompatActivity() {
         mobile: String,
         otp: String,
         name: String,
-        age: String,
-        gender: String,
+        email: String,
+        size: String,
         location: String,
         password: String
     ) {
@@ -181,8 +177,8 @@ class SignUp : AppCompatActivity() {
             putExtra("otp", otp)
             putExtra("mobile", mobile)
             putExtra("name", name)
-            putExtra("age", age)
-            putExtra("gender", gender)
+            putExtra("email", email)
+            putExtra("size", size)
             putExtra("location", location)
             putExtra("password", password)
         }
@@ -193,8 +189,8 @@ class SignUp : AppCompatActivity() {
     private fun validateFields(
         nameField: TextInputEditText,
         mobileField: TextInputEditText,
-        ageField: TextInputEditText,
-        genderField: AutoCompleteTextView,
+        emailField: TextInputEditText,
+        sizeField: TextInputEditText,
         locationField: TextInputEditText,
         passwordField: TextInputEditText,
         progressBar: ProgressBar
@@ -204,15 +200,15 @@ class SignUp : AppCompatActivity() {
         // Reset previous errors
         nameField.error = null
         mobileField.error = null
-        ageField.error = null
-        genderField.error = null
+        emailField.error = null
+        sizeField.error = null
         locationField.error = null
         passwordField.error = null
 
         val name = nameField.text.toString().trim()
         val mobile = mobileField.text.toString().trim()
-        val age = ageField.text.toString().trim()
-        val gender = genderField.text.toString().trim()
+        val email = emailField.text.toString().trim()
+        val size = sizeField.text.toString().trim()
         val location = locationField.text.toString().trim()
         val password = passwordField.text.toString().trim()
 
@@ -232,29 +228,17 @@ class SignUp : AppCompatActivity() {
         }
 
         // Validate Age
-        if (age.isEmpty()) {
-            ageField.error = "Age cannot be empty"
+        if (email.isEmpty()) {
+            emailField.error = "email cannot be empty"
             isValid = false
-        } else {
-            try {
-                val ageInt = age.toInt()
-                if (ageInt <= 0) {
-                    ageField.error = "Enter a valid age"
-                    isValid = false
-                }
-            } catch (e: NumberFormatException) {
-                ageField.error = "Age must be a number"
-                isValid = false
-            }
         }
 
         // Validate Gender
-        if (gender.isEmpty()) {
-            findViewById<TextInputLayout>(R.id.genderInputLayout).error = "Select a valid gender"
+        if (size.isEmpty()) {
+            findViewById<TextInputLayout>(R.id.sizeInputLayout).error = "Size cannot be empty"
             isValid=false
-        } else {
-            findViewById<TextInputLayout>(R.id.genderInputLayout).error = null
         }
+
 
         // Validate Location
         if (location.isEmpty()) {
