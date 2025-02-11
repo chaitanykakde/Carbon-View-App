@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "367542649709",
+    "project_id": "carbon-view",
+    "storage_bucket": "carbon-view.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367542649709:android:e556aea55304df1a051064",
+        "android_client_info": {
+          "package_name": "com.chaitany.carbonview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD45n3fp7NN-tLvWBhk8ARbl-gYE8m59h4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
