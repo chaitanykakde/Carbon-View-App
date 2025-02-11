@@ -50,9 +50,9 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
 
         public FeedbackViewHolder(View itemView) {
             super(itemView);
-            commentText = itemView.findViewById(R.id.feedback_comment);
-            userNameText = itemView.findViewById(R.id.feedback_user_name);
-            starRatingView = itemView.findViewById(R.id.feedback_star_rating);
+//            commentText = itemView.findViewById(R.id.feedback_comment);
+//            userNameText = itemView.findViewById(R.id.feedback_user_name);
+//            starRatingView = itemView.findViewById(R.id.feedback_star_rating);
         }
     }
 }
