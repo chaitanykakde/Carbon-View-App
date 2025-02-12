@@ -19,39 +19,33 @@
 
         <!-- Main Scrollable Content -->
         <androidx.core.widget.NestedScrollView
-            android:layout_marginTop="80dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="80dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="120dp">
+                android:orientation="vertical">
 
                 <!-- Dashboard -->
                 <include layout="@layout/card_dashboard"/>
-
                 <!-- Quick Actions -->
                 <include layout="@layout/grid_quick_actions"/>
-
                 <!-- Alerts -->
                 <include layout="@layout/card_alerts"/>
-
                 <!-- Industry & News -->
                 <include layout="@layout/card_industry_news"/>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <!-- Bottom Navigation - Now properly positioned below all content -->
+        <!-- Bottom Navigation -->
         <include
             layout="@layout/bottom_navigation"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"/>
+
+           />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
