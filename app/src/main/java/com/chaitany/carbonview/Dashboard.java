@@ -1,5 +1,6 @@
 package com.chaitany.carbonview;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,13 +21,16 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser ;
 
 public class Dashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private ImageView menuIcon;
     private SharedPreferences sharedPreferences;
-    LinearLayout adddata, uploadreport, viewreport, aiinsights, forecast, compare;
+    private FirebaseAuth auth; // Firebase Auth instance
+    LinearLayout adddata, uploadreport, viewreport, aiinsights, Connectiot, compare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,9 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Load user information
+        loadUserInfo();
     }
 
     private void setUponClickListener() {
@@ -53,7 +60,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         uploadreport.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, UploadReport.class)));
         viewreport.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, ViewReport.class)));
         aiinsights.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, AiInsights.class)));
-        forecast.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, Forecast.class)));
+        Connectiot.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, ConnectIOT.class)));
         compare.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, Compare.class)));
     }
 
@@ -64,8 +71,11 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         uploadreport = findViewById(R.id.uploadreport);
         viewreport = findViewById(R.id.viewreport);
         aiinsights = findViewById(R.id.aiinsights);
-        forecast = findViewById(R.id.forecast);
+        Connectiot = findViewById(R.id.connectiot);
         compare = findViewById(R.id.compare);
+
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance();
 
         // Set click listener for menu icon
         menuIcon.setOnClickListener(v -> toggleNavigationDrawer());
@@ -76,13 +86,30 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-
-
     private void toggleNavigationDrawer() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             drawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
+
+    private void loadUserInfo() {
+        FirebaseUser  currentUser  = auth.getCurrentUser ();
+        if (currentUser  != null) {
+            String userName = currentUser .getDisplayName(); // Get user name
+            String userEmail = currentUser .getEmail(); // Get user email
+
+            // Update the navigation header with user info
+            NavigationView navigationView = findViewById(R.id.navigationView);
+            View headerView = navigationView.getHeaderView(0); // Get the header view
+            TextView usernameTextView = headerView.findViewById(R.id.username);
+            TextView emailTextView = headerView.findViewById(R.id.mobile); // Assuming mobile is used for email in the header
+
+            usernameTextView.setText(userName != null ? userName : "User  Name");
+            emailTextView.setText(userEmail != null ? userEmail : "Email Address");
+        } else {
+            Toast.makeText(this, "User  not logged in", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -99,9 +126,16 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     }
 
     private void handleLogout() {
+        // Sign out from Firebase
+        auth.signOut();
+
+        // Clear SharedPreferences
+        sharedPreferences = getSharedPreferences("UserLogin", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLogged", false);
         editor.apply();
+
+        // Navigate to Login Activity
         startActivity(new Intent(Dashboard.this, Login.class));
         finish();
     }

@@ -11,18 +11,16 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser ;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,20 +41,18 @@ public class AddData extends AppCompatActivity {
 
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
+    private FirebaseAuth auth;
 
     private Dialog progressDialog;
     private MaterialTextView progressText;
 
-    private String mobile;
     private RecyclerView uploadsRecyclerView;
     private UploadsAdapter uploadAdapter;
     private List<UploadItem> uploadList;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_data);
 
         uploadsRecyclerView = findViewById(R.id.uploadsRecyclerView);
@@ -68,18 +63,20 @@ public class AddData extends AppCompatActivity {
         uploadAdapter = new UploadsAdapter(this, uploadList);
         uploadsRecyclerView.setAdapter(uploadAdapter);
 
-        SharedPreferences sharedPref = getSharedPreferences("UserLogin", MODE_PRIVATE);
-        mobile = sharedPref.getString("mobile", null);
+        // Initialize Firebase
+        auth = FirebaseAuth.getInstance();
+        FirebaseUser  currentUser  = auth.getCurrentUser ();
 
-        if (mobile == null) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+        if (currentUser  == null) {
+            Toast.makeText(this, "User  not logged in", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, Login.class));
             finish();
             return;
         }
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users").child(mobile).child("uploads");
-        storageReference = FirebaseStorage.getInstance().getReference("uploads").child(mobile);
+        String userId = currentUser .getUid();
+        databaseReference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("uploads");
+        storageReference = FirebaseStorage.getInstance().getReference("uploads").child(userId);
 
         ImageButton backButton = findViewById(R.id.backButton);
         MaterialCardView fileUploadCard = findViewById(R.id.fileUploadCard);
@@ -92,7 +89,6 @@ public class AddData extends AppCompatActivity {
         // Call after initializing adapter
         loadUploadedFiles();
     }
-
 
     private void setupProgressDialog() {
         progressDialog = new Dialog(this);
@@ -121,16 +117,11 @@ public class AddData extends AppCompatActivity {
     }
 
     private void uploadFileToFirebase(Uri fileUri) {
-        if (mobile == null) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String fileName = System.currentTimeMillis() + "_" + fileUri.getLastPathSegment();
         StorageReference fileRef = storageReference.child(fileName);
 
         StorageMetadata metadata = new StorageMetadata.Builder()
-                .setCustomMetadata("mobile", mobile)  // Store mobile in metadata
+                .setCustomMetadata("userId", auth.getCurrentUser ().getUid())  // Store user ID in metadata
                 .build();
 
         progressDialog.show();
@@ -141,7 +132,7 @@ public class AddData extends AppCompatActivity {
                     String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
                     // Save metadata in Firebase Realtime Database
-                    UploadItem uploadItem = new UploadItem(fileName, date, fileUrl, mobile);
+                    UploadItem uploadItem = new UploadItem(fileName, date, fileUrl, auth.getCurrentUser ().getUid());
                     databaseReference.push().setValue(uploadItem)
                             .addOnSuccessListener(aVoid -> {
                                 progressDialog.dismiss();
@@ -158,13 +149,7 @@ public class AddData extends AppCompatActivity {
                 });
     }
 
-
     private void loadUploadedFiles() {
-        if (mobile == null) {
-            Toast.makeText(this, "Mobile number is null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         // Fetching file data from Firebase Realtime Database
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -179,9 +164,6 @@ public class AddData extends AppCompatActivity {
                     UploadItem uploadItem = dataSnapshot.getValue(UploadItem.class);
                     if (uploadItem != null) {
                         uploadList.add(uploadItem);
-
-                        // Show toast with file details
-                        Toast.makeText(AddData.this, "File: " + uploadItem.getFileName() + "\nURL: " + uploadItem.getFileUrl(), Toast.LENGTH_LONG).show();
                     }
                 }
                 uploadAdapter.notifyDataSetChanged();
@@ -193,8 +175,4 @@ public class AddData extends AppCompatActivity {
             }
         });
     }
-
-
-
-
 }

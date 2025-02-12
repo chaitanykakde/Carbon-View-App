@@ -1,11 +1,10 @@
-package com.chaitany.carbonview;
+package com.chaitany.carbonview
 
 import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
@@ -30,7 +29,6 @@ class Splash : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("UserLogin", Context.MODE_PRIVATE)
 
         requestAllPermissions()  // Request all permissions at once
-
 
         // Setup window insets for edge-to-edge view
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -69,8 +67,8 @@ class Splash : AppCompatActivity() {
 
     // Check if onboarding was shown, then check login status
     private fun checkOnboardingStatus() {
-        val appPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-        val isFirstTime = appPreferences.getBoolean("isFirstTime", true)
+        val appPreferences = getSharedPreferences("UserLogin", Context.MODE_PRIVATE)
+        val isFirstTime = appPreferences.getBoolean("isLogged", true)
 
         val handler = Handler()
         handler.postDelayed({
@@ -119,6 +117,4 @@ class Splash : AppCompatActivity() {
             }
         }
     }
-
-
 }

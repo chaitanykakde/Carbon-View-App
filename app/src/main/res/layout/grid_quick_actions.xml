@@ -189,7 +189,7 @@
             app:cardBackgroundColor="#03A9F4">
 
             <LinearLayout
-                android:id="@+id/forecast"
+                android:id="@+id/connectiot"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -206,7 +206,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Forecast"
+                    android:text="Connect Iot"
                     android:textStyle="bold"
 
                     android:fontFamily="sans-serif-condensed-light"

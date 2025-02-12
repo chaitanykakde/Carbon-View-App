@@ -1,27 +1,22 @@
-package com.chaitany.carbonview;
+package com.chaitany.carbonview
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.telephony.SmsManager
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-
 import kotlin.random.Random
 
 class SignUp : AppCompatActivity() {
@@ -34,12 +29,10 @@ class SignUp : AppCompatActivity() {
     private lateinit var passwordField: TextInputEditText
     private lateinit var signupButton: MaterialButton
     private lateinit var progressBar: ProgressBar
-    private lateinit var loginButton:MaterialButton
-    private val REQUEST_CODE_SEND_SMS = 101
-
-
+    private lateinit var loginButton: MaterialButton
 
     private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,20 +47,17 @@ class SignUp : AppCompatActivity() {
         passwordField = findViewById(R.id.passwordField)
         signupButton = findViewById(R.id.signupButton)
         progressBar = findViewById(R.id.progressBar)
-        loginButton=findViewById(R.id.btnLogin)
+        loginButton = findViewById(R.id.btnLogin)
 
         database = FirebaseDatabase.getInstance().reference
+        auth = FirebaseAuth.getInstance()
 
         val cbShowPassword = findViewById<CheckBox>(R.id.cbShowPassword)
-
-
-
-// Create an adapter and set it to AutoCompleteTextView
-
 
         cbShowPassword.setOnCheckedChangeListener { _, isChecked ->
             togglePasswordVisibility(passwordField, isChecked)
         }
+
         signupButton.setOnClickListener {
             val name = nameField.text.toString().trim()
             val mobile = mobileField.text.toString().trim()
@@ -78,112 +68,54 @@ class SignUp : AppCompatActivity() {
 
             if (validateFields(nameField, mobileField, emailField, sizeField, locationField, passwordField, progressBar)) {
                 progressBar.visibility = View.VISIBLE
-                checkIfUserExists(mobile) { exists ->
-                    if (exists) {
-                        progressBar.visibility = View.GONE
-                        showUserExistsDialog(mobile) // Show alert if user exists
-                    } else {
-                        val otp = generateOtp()
-                        sendOtpToUser(mobile, otp) // Send OTP to user
-                        openOtpActivity(mobile, otp, name, email, size, location, password) // Open OTP activity
-                    }
-                }
+                createUser (email, password, name, mobile, size, location)
             }
         }
 
-
         loginButton.setOnClickListener {
-            val intent=Intent(this,Login::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Login::class.java))
             finish()
         }
     }
 
-
-    private fun generateOtp(): String {
-        // Generate a random 6-digit OTP
-        return Random.nextInt(100000, 999999).toString()
-    }
-
-    private fun sendOtpToUser(mobile: String, otp: String) {
-        // Check if the permission is granted for SEND_SMS
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.SEND_SMS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // If permission is granted, proceed to send OTP
-            sendSms(mobile, otp)
-        } else {
-            // If permission is not granted, request the permission
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.SEND_SMS),
-                REQUEST_CODE_SEND_SMS
-            )
-        }
-    }
-
-    private fun sendSms(mobile: String, otp: String) {
-        try {
-            // Create the message to send
-            val message = "Your OTP is: $otp"
-
-            // Send SMS using SmsManager
-            val smsManager = SmsManager.getDefault()
-            smsManager.sendTextMessage(mobile, null, message, null, null)
-
-            // Show toast to notify the user that OTP has been sent
-            Toast.makeText(this, "OTP sent to $mobile", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            // Handle exception in case of errors
-            Toast.makeText(this, "Failed to send OTP: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    // Handle permission request result
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_CODE_SEND_SMS -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // If permission granted, send OTP
-                    val mobile = mobileField.text.toString()
-                    val otp = generateOtp()
-                    sendOtpToUser(mobile, otp)
-                } else {
-                    // If permission denied, show a message
-                    Toast.makeText(this, "Permission to send SMS is required", Toast.LENGTH_SHORT).show()
+    private fun createUser (email: String, password: String, name: String, mobile: String, size: String, location: String) {
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+            progressBar.visibility = View.GONE
+            if (task.isSuccessful) {
+                // User created successfully, now store additional info in Realtime Database
+                val userId = auth.currentUser ?.uid
+                val user = User(name, mobile, size, location)
+                if (userId != null) {
+                    database.child("users").child(userId).setValue(user)
+                        .addOnCompleteListener { dbTask ->
+                            if (dbTask.isSuccessful) {
+                                Toast.makeText(this, "User  registered successfully", Toast.LENGTH_SHORT).show()
+                                // Optionally send OTP here
+                                // val otp = generateOtp()
+                                // sendOtpToUser (mobile, otp)
+                                // openOtpActivity(mobile, otp, name, email, size, location, password)
+                            } else {
+                                Toast.makeText(this, "Failed to store user data: ${dbTask.exception?.message}", Toast.LENGTH_LONG).show()
+                            }
+                        }
                 }
+            } else {
+                Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    private fun openOtpActivity(
-        mobile: String,
-        otp: String,
-        name: String,
-        email: String,
-        size: String,
-        location: String,
-        password: String
-    ) {
-        // Intent to start the OTP activity where the user will enter the OTP
-        val intent = Intent(this, OTP::class.java).apply {
-            putExtra("otp", otp)
-            putExtra("mobile", mobile)
-            putExtra("name", name)
-            putExtra("email", email)
-            putExtra("size", size)
-            putExtra("location", location)
-            putExtra("password", password)
+    private fun generateOtp(): String {
+        return Random.nextInt(100000, 999999).toString()
+    }
+
+    private fun togglePasswordVisibility(passwordField: TextInputEditText, showPassword: Boolean) {
+        passwordField.transformationMethod = if (showPassword) {
+            HideReturnsTransformationMethod.getInstance()
+        } else {
+            PasswordTransformationMethod.getInstance()
         }
-        startActivity(intent)
-        finish()
+        passwordField.setSelection(passwordField.text?.length ?: 0) // Keeps cursor at the end
     }
 
     private fun validateFields(
@@ -227,18 +159,20 @@ class SignUp : AppCompatActivity() {
             isValid = false
         }
 
-        // Validate Age
+        // Validate Email
         if (email.isEmpty()) {
-            emailField.error = "email cannot be empty"
+            emailField.error = "Email cannot be empty"
+            isValid = false
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailField.error = "Enter a valid email address"
             isValid = false
         }
 
-        // Validate Gender
+        // Validate Size
         if (size.isEmpty()) {
             findViewById<TextInputLayout>(R.id.sizeInputLayout).error = "Size cannot be empty"
-            isValid=false
+            isValid = false
         }
-
 
         // Validate Location
         if (location.isEmpty()) {
@@ -262,36 +196,10 @@ class SignUp : AppCompatActivity() {
         return isValid
     }
 
-
-    private fun togglePasswordVisibility(passwordField: TextInputEditText, showPassword: Boolean) {
-        if (showPassword) {
-            passwordField.transformationMethod = HideReturnsTransformationMethod.getInstance()
-        } else {
-            passwordField.transformationMethod = PasswordTransformationMethod.getInstance()
-        }
-        passwordField.setSelection(passwordField.text?.length ?: 0) // Keeps cursor at the end
-    }
-
-    private fun checkIfUserExists(mobile: String, callback: (Boolean) -> Unit) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("users")
-
-        databaseRef.child(mobile).get().addOnSuccessListener { dataSnapshot ->
-            callback(dataSnapshot.exists()) // Returns true if user exists, false otherwise
-        }.addOnFailureListener {
-            progressBar.visibility = View.GONE
-            Toast.makeText(this, "Error checking user", Toast.LENGTH_SHORT).show()
-            callback(false) // Assume false in case of error
-        }
-    }
-
-    private fun showUserExistsDialog(mobile: String) {
-        AlertDialog.Builder(this)
-            .setTitle("User Already Exists")
-            .setMessage("An account is already registered with this mobile number: $mobile.\nPlease signup in or use a different number.")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
+    data class User(
+        val name: String = "",
+        val mobile: String = "",
+        val size: String = "",
+        val location: String = ""
+    )
 }

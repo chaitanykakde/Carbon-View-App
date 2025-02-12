@@ -44,11 +44,11 @@
        >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etMobileNumber"
+            android:id="@+id/emailaddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Mobile"
-            android:inputType="numberDecimal"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
             android:maxLength="50"
             android:drawableLeft="@drawable/stelephone"
             android:drawableTint="@color/gray"

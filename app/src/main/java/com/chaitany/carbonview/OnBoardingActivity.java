@@ -47,6 +47,7 @@ public class OnBoardingActivity extends AppCompatActivity {
                     "to reduce emissions and achieve\n" +
                     "sustainability goals."
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +55,10 @@ public class OnBoardingActivity extends AppCompatActivity {
         // Get SharedPreferences
         sharedPreferences = getSharedPreferences("UserLogin", Context.MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLogged", false);
+        boolean isOnboardingCompleted = sharedPreferences.getBoolean("isOnboardingCompleted", false);
 
-        // If user is logged in, skip onboarding and go to the main screen (Dashboard)
-        if (isLoggedIn) {
+        // If user is logged in or onboarding is completed, skip onboarding and go to the main screen (Dashboard)
+        if (isLoggedIn || isOnboardingCompleted) {
             startActivity(new Intent(this, Dashboard.class));
             finish();
             return;
@@ -88,11 +90,15 @@ public class OnBoardingActivity extends AppCompatActivity {
         });
 
         btnSkip.setOnClickListener(v -> finishOnboarding());
-
     }
 
     // Change navigation bar color
     private void finishOnboarding() {
+        // Set onboarding completed flag in SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isOnboardingCompleted", true);
+        editor.apply();
+
         startActivity(new Intent(this, GetStartedActivity.class));
         finish();
     }

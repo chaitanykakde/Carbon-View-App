@@ -1,14 +1,13 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="250dp"
-    android:layout_height="200dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp">
 
     <ImageView
-        android:layout_marginTop="20dp"
         android:id="@+id/user_png"
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -20,7 +19,7 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User Name"
+        android:text="User  Name"
         android:textColor="@color/primary"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -31,15 +30,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:text="XXXX XX XXXX"
+        android:text="user@example.com"
         android:textColor="@android:color/black"
         android:textSize="14sp" />
+
     <View
         android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/primary">
-
-    </View>
-
+        android:background="@color/primary" />
 </LinearLayout>
