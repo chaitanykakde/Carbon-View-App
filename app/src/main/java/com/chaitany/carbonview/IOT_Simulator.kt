@@ -1,82 +1,68 @@
 package com.chaitany.carbonview
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.*
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.database.*
 
 class IOT_Simulator : AppCompatActivity() {
     private lateinit var database: DatabaseReference
+    private lateinit var scope1Text: TextView
+    private lateinit var scope2Text: TextView
+    private lateinit var scope3Text: TextView
+    private lateinit var recentEntryText: TextView
     private lateinit var pieChart: PieChart
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var emissionAdapter: EmissionAdapter
-    private val emissionList = ArrayList<EmissionData>()
+    private lateinit var barChart: BarChart
+    private lateinit var generatePdfButton:MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_iot_simulator)
 
-        // Initialize Views
+        // Initialize UI Elements
+        scope1Text = findViewById(R.id.scope1Text)
+        scope2Text = findViewById(R.id.scope2Text)
+        scope3Text = findViewById(R.id.scope3Text)
+        recentEntryText = findViewById(R.id.recentEntryText)
         pieChart = findViewById(R.id.pieChart)
-        recyclerView = findViewById(R.id.recyclerView)
+        barChart = findViewById(R.id.barChart)
+        generatePdfButton=findViewById(R.id.generatePdfButton)
 
-        setupPieChart()
-        setupRecyclerView()
-
-        // Firebase Database Reference
         database = FirebaseDatabase.getInstance().getReference("emissions_data")
 
-        // Fetch Data in Real-Time
         fetchData()
-    }
 
-    // Configure the Pie Chart
-    private fun setupPieChart() {
-        pieChart.apply {
-            description.isEnabled = false
-            setUsePercentValues(true)
-            isDrawHoleEnabled = true
-            holeRadius = 40f
-            setEntryLabelColor(Color.BLACK)
-            setEntryLabelTextSize(12f)
+
+        generatePdfButton.setOnClickListener {
+            val intent = Intent(this, IOTReport::class.java)
+            startActivity(intent)
         }
     }
 
-    // Setup RecyclerView
-    private fun setupRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(this).apply {
-            reverseLayout = true // Newest entry at top
-            stackFromEnd = true
-        }
-        emissionAdapter = EmissionAdapter(emissionList)
-        recyclerView.adapter = emissionAdapter
-    }
-
-    // Fetch Data from Firebase
     private fun fetchData() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                var scope1 = 0f
-                var scope2 = 0f
-                var scope3 = 0f
-                val tempList = ArrayList<EmissionData>()
+                var scope1 = 0.0
+                var scope2 = 0.0
+                var scope3 = 0.0
+                var recentEmission: EmissionData? = null
 
                 for (data in snapshot.children) {
                     try {
                         val emissionData = data.getValue(EmissionData::class.java)
                         emissionData?.let {
-                            tempList.add(it)
-
-                            // Correctly retrieve emission values based on Scope
+                            recentEmission = it // Save the last entry
                             when (it.Scope) {
-                                "Scope 1" -> scope1 += it.`Emission`.toFloat()
-                                "Scope 2" -> scope2 += it.`Emission`.toFloat()
-                                "Scope 3" -> scope3 += it.`Emission`.toFloat()
+                                "Scope 1" -> scope1 += it.Emission
+                                "Scope 2" -> scope2 += it.Emission
+                                "Scope 3" -> scope3 += it.Emission
                             }
                         }
                     } catch (e: Exception) {
@@ -84,16 +70,27 @@ class IOT_Simulator : AppCompatActivity() {
                     }
                 }
 
-                // Reverse list so newest entries appear first
-                tempList.reverse()
+                // Update UI
+                scope1Text.text = "Scope 1: $scope1 kg"
+                scope2Text.text = "Scope 2: $scope2 kg"
+                scope3Text.text = "Scope 3: $scope3 kg"
 
-                // Update RecyclerView
-                emissionList.clear()
-                emissionList.addAll(tempList)
-                emissionAdapter.updateList(emissionList)
+                // Show the most recent entry with all details
+                recentEmission?.let {
+                    val recentText = """
+                        🔹 **Activity:** ${it.Activity}
+                        📅 **Date:** ${it.Date}
+                        🔥 **Emission:** ${it.Emission} kg
+                        🌍 **Scope:** ${it.Scope}
+                        ⏳ **Timestamp:** ${it.timestamp}
+                    """.trimIndent()
 
-                // Update Pie Chart
+                    recentEntryText.text = recentText
+                }
+
+                // Update Charts
                 updatePieChart(scope1, scope2, scope3)
+                updateBarChart(scope1, scope2, scope3)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -102,29 +99,45 @@ class IOT_Simulator : AppCompatActivity() {
         })
     }
 
+    private fun updatePieChart(scope1: Double, scope2: Double, scope3: Double) {
+        val entries = listOf(
+            PieEntry(scope1.toFloat(), "Scope 1"),
+            PieEntry(scope2.toFloat(), "Scope 2"),
+            PieEntry(scope3.toFloat(), "Scope 3")
+        )
 
-    private fun updatePieChart(scope1: Float, scope2: Float, scope3: Float) {
-        pieChart.clear() // Clear old data
-
-        val entries = mutableListOf<PieEntry>()
-        if (scope1 > 0) entries.add(PieEntry(scope1, "Scope 1"))
-        if (scope2 > 0) entries.add(PieEntry(scope2, "Scope 2"))
-        if (scope3 > 0) entries.add(PieEntry(scope3, "Scope 3"))
-
-        if (entries.isEmpty()) {
-            Log.e("PieChart", "No data available for Pie Chart")
-            return
+        val dataSet = PieDataSet(entries, "Emissions").apply {
+            colors = listOf(Color.RED, Color.YELLOW, Color.GREEN)
         }
 
-        val dataSet = PieDataSet(entries, "Emission Categories").apply {
-            colors = listOf(Color.RED, Color.BLUE, Color.GREEN)
-            valueTextSize = 14f
+        pieChart.apply {
+            data = PieData(dataSet)
+            description.text = "Distribution of Emission Scopes"
+            setEntryLabelColor(Color.BLACK)
+            animateY(1000)
+            invalidate()
         }
-
-        pieChart.data = PieData(dataSet)
-        pieChart.invalidate() // Refresh chart
     }
 
+    private fun updateBarChart(scope1: Double, scope2: Double, scope3: Double) {
+        val entries = listOf(
+            BarEntry(1f, scope1.toFloat()),
+            BarEntry(2f, scope2.toFloat()),
+            BarEntry(3f, scope3.toFloat())
+        )
 
+        val dataSet = BarDataSet(entries, "Emission Data").apply {
+            colors = listOf(Color.RED, Color.BLUE, Color.GREEN)
+        }
 
+        barChart.apply {
+            data = BarData(dataSet)
+            description.text = "Comparison of Emissions Across Scopes"
+            setFitBars(true)
+            animateY(1000)
+            invalidate()
+        }
+    }
 }
+
+
