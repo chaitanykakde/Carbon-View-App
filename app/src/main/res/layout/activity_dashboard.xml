@@ -32,26 +32,20 @@
 
                 <!-- Dashboard -->
                 <include layout="@layout/card_dashboard"/>
-
                 <!-- Quick Actions -->
                 <include layout="@layout/grid_quick_actions"/>
-
                 <!-- Alerts -->
                 <include layout="@layout/card_alerts"/>
-
                 <!-- Industry & News -->
                 <include layout="@layout/card_industry_news"/>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <!-- Bottom Navigation - Now properly positioned below all content -->
-        <include
-            layout="@layout/bottom_navigation"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"/>
+
+        <include layout="@layout/bottom_navigation"
+
+            />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

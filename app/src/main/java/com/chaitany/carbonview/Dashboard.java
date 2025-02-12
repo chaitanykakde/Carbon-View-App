@@ -26,7 +26,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     private DrawerLayout drawerLayout;
     private ImageView menuIcon;
     private SharedPreferences sharedPreferences;
-    LinearLayout adddata,uploadreport,viewreport,aiinsights,forecast,compare;
+    LinearLayout adddata, uploadreport, viewreport, aiinsights, forecast, compare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +37,8 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         // Initialize views
         initializeViews();
         setupNavigationDrawer();
-        setupUserProfile();
-        setuponlickilistener();
+
+        setUponClickListener();
 
         // Handle window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -48,52 +48,24 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         });
     }
 
-    private void setuponlickilistener() {
-        adddata.setOnClickListener(view -> {
-            Intent intent = new Intent(Dashboard.this, AddData.class);
-            startActivity(intent);
-        });
-        uploadreport.setOnClickListener(view -> {
-            Intent intent = new Intent(Dashboard.this, UploadReport.class);
-            startActivity(intent);
-        });
-
-        viewreport.setOnClickListener(view -> {
-            Intent intent = new Intent(Dashboard.this, ViewReport.class);
-            startActivity(intent);
-        });
-
-        aiinsights.setOnClickListener(view -> {
-            Intent intent = new Intent(Dashboard.this, AiInsights.class);
-            startActivity(intent);
-        });
-
-        forecast.setOnClickListener(view -> {
-            Intent intent = new Intent(Dashboard.this, Forecast.class);
-            startActivity(intent);
-        });
-
-        compare.setOnClickListener(view -> {
-            Intent intent = new Intent(Dashboard.this, Compare.class);
-            startActivity(intent);
-        });
-
-
+    private void setUponClickListener() {
+        adddata.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, AddData.class)));
+        uploadreport.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, UploadReport.class)));
+        viewreport.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, ViewReport.class)));
+        aiinsights.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, AiInsights.class)));
+        forecast.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, Forecast.class)));
+        compare.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, Compare.class)));
     }
 
     private void initializeViews() {
         drawerLayout = findViewById(R.id.drawerLayout);
         menuIcon = findViewById(R.id.menuIcon);
-        adddata=findViewById(R.id.add_data);
-        uploadreport=findViewById(R.id.uploadreport);
-        viewreport=findViewById(R.id.viewreport);
-        aiinsights=findViewById(R.id.aiinsights);
-        forecast=findViewById(R.id.forecast);
-        compare=findViewById(R.id.compare);
-
-
-
-        // Ensure this exists in your app_bar_header.xml
+        adddata = findViewById(R.id.add_data);
+        uploadreport = findViewById(R.id.uploadreport);
+        viewreport = findViewById(R.id.viewreport);
+        aiinsights = findViewById(R.id.aiinsights);
+        forecast = findViewById(R.id.forecast);
+        compare = findViewById(R.id.compare);
 
         // Set click listener for menu icon
         menuIcon.setOnClickListener(v -> toggleNavigationDrawer());
@@ -104,22 +76,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void setupUserProfile() {
-        NavigationView navigationView = findViewById(R.id.navigationView);
-        View headerView = navigationView.getHeaderView(0);
 
-        SharedPreferences sharedPref = getSharedPreferences("UserLogin", MODE_PRIVATE);
-        String name = sharedPref.getString("name", "User Name");
-        String mobile = sharedPref.getString("mobile", "XXXX XX XXXX");
-
-        TextView username = findViewById(R.id.username);
-        TextView usernameHeader = headerView.findViewById(R.id.username);
-        TextView mobileHeader = headerView.findViewById(R.id.mobile);
-
-     //   username.setText(getString("hello", name));
-        usernameHeader.setText(name);
-        mobileHeader.setText(mobile);
-    }
 
     private void toggleNavigationDrawer() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -132,13 +89,11 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-
         if (itemId == R.id.nav_logout) {
             handleLogout();
         } else {
             handleNavigationItem(itemId);
         }
-
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -147,14 +102,12 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLogged", false);
         editor.apply();
-
         startActivity(new Intent(Dashboard.this, Login.class));
         finish();
     }
 
     private void handleNavigationItem(int itemId) {
         Intent intent = null;
-
         if (itemId == R.id.nav_profile) {
             intent = new Intent(this, ProfileActivity.class);
         } else if (itemId == R.id.nav_share) {
@@ -165,7 +118,6 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         } else if (itemId == R.id.nav_about) {
             intent = new Intent(this, AboutActivity.class);
         }
-
         if (intent != null) {
             startActivity(intent);
         } else {
@@ -175,13 +127,10 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
     private void shareApp() {
         String appLink = "https://play.google.com/store/apps/details?id=com.chaitany.agewell";
-      //  String shareMessage = getString(R.string.share_message, appLink);
-
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-       // shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
-      ////  shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-      //  startActivity(Intent.createChooser(shareIntent, getString(R.string.share_via)));
+        shareIntent.putExtra(Intent.EXTRA_TEXT, appLink);
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
 
     @Override
