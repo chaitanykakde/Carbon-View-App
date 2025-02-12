@@ -53,14 +53,18 @@
         app:iconGravity="textStart"
         />
 
-        <ImageButton
-            android:id="@+id/deleteButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="delete"
-        android:layout_marginStart="8dp"
-         />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/deletebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="delete"
+            android:textAllCaps="false"
+            android:layout_marginEnd="8dp"
+            app:backgroundTint="#E426BC12"
+            app:icon="@drawable/ic_add"
+            app:iconPadding="4dp"
+            app:iconGravity="textStart">
+
+        </com.google.android.material.button.MaterialButton>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

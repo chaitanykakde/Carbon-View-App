@@ -1,83 +1,89 @@
 package com.chaitany.carbonview;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
-public class UploadsAdapter extends RecyclerView.Adapter<UploadsAdapter.UploadViewHolder> {
-    private List<UploadItem> uploads;
-    private OnItemClickListener listener;
+public class UploadsAdapter extends RecyclerView.Adapter<UploadsAdapter.ViewHolder> {
 
-    public interface OnItemClickListener {
-        void onAnalyzeClick(int position);
-        void onDeleteClick(int position);
-    }
+    private final Context context;
+    private final List<UploadItem> uploadList;
 
-    public UploadsAdapter(List<UploadItem> uploads, OnItemClickListener listener) {
-        this.uploads = uploads;
-        this.listener = listener;
+    public UploadsAdapter(Context context, List<UploadItem> uploadList) {
+        this.context = context;
+        this.uploadList = uploadList;
     }
 
     @NonNull
     @Override
-    public UploadViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_item_recent_uploads, parent, false);
-        return new UploadViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_item_recent_uploads, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UploadViewHolder holder, int position) {
-        UploadItem item = uploads.get(position);
-        holder.fileNameText.setText(item.getFileName());
-        holder.dateText.setText(item.getDate());
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        UploadItem uploadItem = uploadList.get(position);
+
+        holder.fileNameText.setText(uploadItem.getFileName());
+        holder.uploadDateText.setText("Uploaded on: " + uploadItem.getDate());
+
+        // Analyze button click event
+        holder.analyzeButton.setOnClickListener(v -> {
+            Toast.makeText(context, "Analyzing " + uploadItem.getFileName(), Toast.LENGTH_SHORT).show();
+            // TODO: Implement file analysis logic here
+        });
+
+        // Delete button click event
+        holder.deleteButton.setOnClickListener(v -> deleteFile(uploadItem, position));
     }
 
     @Override
     public int getItemCount() {
-        return uploads.size();
+        return uploadList.size();
     }
 
-    class UploadViewHolder extends RecyclerView.ViewHolder {
-        TextView fileNameText;
-        TextView dateText;
-        MaterialButton analyzeButton;
-        ImageButton deleteButton;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView fileNameText, uploadDateText;
+        MaterialButton analyzeButton, deleteButton;
 
-        UploadViewHolder(View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             fileNameText = itemView.findViewById(R.id.fileNameText);
-            dateText = itemView.findViewById(R.id.dateText);
+            uploadDateText = itemView.findViewById(R.id.dateText);
             analyzeButton = itemView.findViewById(R.id.analyzeButton);
-            deleteButton = itemView.findViewById(R.id.deleteButton);
-
-            analyzeButton.setOnClickListener(v -> {
-                if (listener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        listener.onAnalyzeClick(position);
-                    }
-                }
-            });
-
-            deleteButton.setOnClickListener(v -> {
-                if (listener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        listener.onDeleteClick(position);
-                    }
-                }
-            });
+            deleteButton = itemView.findViewById(R.id.deletebutton);
         }
+    }
+
+    private void deleteFile(UploadItem uploadItem, int position) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users")
+                .child(uploadItem.getMobile())
+                .child("uploads");
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(uploadItem.getFileUrl());
+
+        storageReference.delete().addOnSuccessListener(aVoid -> {
+            databaseReference.child(uploadItem.getFileName()).removeValue().addOnSuccessListener(aVoid1 -> {
+                uploadList.remove(position);
+                notifyItemRemoved(position);
+                Toast.makeText(context, "File deleted", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener(e -> Toast.makeText(context, "Failed to delete from database", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e -> Toast.makeText(context, "Failed to delete file", Toast.LENGTH_SHORT).show());
     }
 }
