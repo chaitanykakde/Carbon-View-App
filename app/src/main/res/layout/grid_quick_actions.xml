@@ -35,6 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:id="@+id/add_data"
                 android:layout_gravity="center"
 
                 android:orientation="vertical"
@@ -71,6 +72,7 @@
             app:cardBackgroundColor="#EB3F51B5">
 
             <LinearLayout
+                android:id="@+id/uploadreport"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -109,6 +111,7 @@
             app:cardBackgroundColor="#FA009688">
 
             <LinearLayout
+                android:id="@+id/viewreport"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -147,6 +150,7 @@
             app:cardBackgroundColor="#673AB7">
 
             <LinearLayout
+                android:id="@+id/aiinsights"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -185,6 +189,7 @@
             app:cardBackgroundColor="#03A9F4">
 
             <LinearLayout
+                android:id="@+id/forecast"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -223,6 +228,7 @@
             app:cardBackgroundColor="#4CAF50">
 
             <LinearLayout
+                android:id="@+id/compare"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"

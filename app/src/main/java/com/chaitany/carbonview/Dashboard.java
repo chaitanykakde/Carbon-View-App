@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     private DrawerLayout drawerLayout;
     private ImageView menuIcon;
     private SharedPreferences sharedPreferences;
+    LinearLayout adddata,uploadreport,viewreport,aiinsights,forecast,compare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         initializeViews();
         setupNavigationDrawer();
         setupUserProfile();
+        setuponlickilistener();
 
         // Handle window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -45,9 +48,52 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         });
     }
 
+    private void setuponlickilistener() {
+        adddata.setOnClickListener(view -> {
+            Intent intent = new Intent(Dashboard.this, AddData.class);
+            startActivity(intent);
+        });
+        uploadreport.setOnClickListener(view -> {
+            Intent intent = new Intent(Dashboard.this, UploadReport.class);
+            startActivity(intent);
+        });
+
+        viewreport.setOnClickListener(view -> {
+            Intent intent = new Intent(Dashboard.this, ViewReport.class);
+            startActivity(intent);
+        });
+
+        aiinsights.setOnClickListener(view -> {
+            Intent intent = new Intent(Dashboard.this, AiInsights.class);
+            startActivity(intent);
+        });
+
+        forecast.setOnClickListener(view -> {
+            Intent intent = new Intent(Dashboard.this, Forecast.class);
+            startActivity(intent);
+        });
+
+        compare.setOnClickListener(view -> {
+            Intent intent = new Intent(Dashboard.this, Compare.class);
+            startActivity(intent);
+        });
+
+
+    }
+
     private void initializeViews() {
         drawerLayout = findViewById(R.id.drawerLayout);
-        menuIcon = findViewById(R.id.menuIcon); // Ensure this exists in your app_bar_header.xml
+        menuIcon = findViewById(R.id.menuIcon);
+        adddata=findViewById(R.id.add_data);
+        uploadreport=findViewById(R.id.uploadreport);
+        viewreport=findViewById(R.id.viewreport);
+        aiinsights=findViewById(R.id.aiinsights);
+        forecast=findViewById(R.id.forecast);
+        compare=findViewById(R.id.compare);
+
+
+
+        // Ensure this exists in your app_bar_header.xml
 
         // Set click listener for menu icon
         menuIcon.setOnClickListener(v -> toggleNavigationDrawer());
