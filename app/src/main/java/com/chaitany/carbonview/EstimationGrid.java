@@ -38,6 +38,7 @@ public class EstimationGrid extends AppCompatActivity {
     }
 
     private void setuplonclicklistener() {
+
         electricityCard.setOnClickListener(view -> {
 
             startActivity(new Intent(this, ElectricityEmission.class));
