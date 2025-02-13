@@ -1,6 +1,7 @@
 package com.chaitany.carbonview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +46,13 @@ public class UploadsAdapter extends RecyclerView.Adapter<UploadsAdapter.ViewHold
 
         // Analyze button click event
         holder.analyzeButton.setOnClickListener(v -> {
-            Toast.makeText(context, "Analyzing " + uploadItem.getFileName(), Toast.LENGTH_SHORT).show();
-            // TODO: Implement file analysis logic here
+            // Fetch the file URL from the upload item
+            String fileUrl = uploadItem.getFileUrl();
+
+            // Launch AnalyzeActivity and pass the file URL
+            Intent intent = new Intent(context, AnalyzeActivity.class);
+            intent.putExtra("fileUrl", fileUrl);
+            context.startActivity(intent);
         });
 
         // Delete button click event
@@ -67,23 +73,37 @@ public class UploadsAdapter extends RecyclerView.Adapter<UploadsAdapter.ViewHold
             fileNameText = itemView.findViewById(R.id.fileNameText);
             uploadDateText = itemView.findViewById(R.id.dateText);
             analyzeButton = itemView.findViewById(R.id.analyzeButton);
-            deleteButton = itemView.findViewById(R.id.deletebutton);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
         }
     }
 
     private void deleteFile(UploadItem uploadItem, int position) {
+        // Get reference to the user's uploads in Firebase Realtime Database
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users")
-                .child(uploadItem.getMobile())
+                .child(uploadItem.getMobile()) // Assuming "userId" is the unique identifier
                 .child("uploads");
 
+        // Get reference to the file in Firebase Storage
         StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(uploadItem.getFileUrl());
 
+        // Delete the file from Firebase Storage
         storageReference.delete().addOnSuccessListener(aVoid -> {
-            databaseReference.child(uploadItem.getFileName()).removeValue().addOnSuccessListener(aVoid1 -> {
-                uploadList.remove(position);
-                notifyItemRemoved(position);
-                Toast.makeText(context, "File deleted", Toast.LENGTH_SHORT).show();
-            }).addOnFailureListener(e -> Toast.makeText(context, "Failed to delete from database", Toast.LENGTH_SHORT).show());
-        }).addOnFailureListener(e -> Toast.makeText(context, "Failed to delete file", Toast.LENGTH_SHORT).show());
+            // If file is successfully deleted from Storage, proceed to delete from Firebase Realtime Database
+            databaseReference.child(uploadItem.getFileName()).removeValue()
+                    .addOnSuccessListener(aVoid1 -> {
+                        // Remove the item from the uploadList and notify the adapter
+                        uploadList.remove(position);
+                        notifyItemRemoved(position);
+                        Toast.makeText(context, "File and data deleted successfully", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(e -> {
+                        // If failed to remove from database, show an error message
+                        Toast.makeText(context, "Failed to delete data from the database", Toast.LENGTH_SHORT).show();
+                    });
+        }).addOnFailureListener(e -> {
+            // If failed to delete the file from Storage, show an error message
+            Toast.makeText(context, "Failed to delete file from storage", Toast.LENGTH_SHORT).show();
+        });
     }
+
+
 }

@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@color/white">
@@ -35,9 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:cardCornerRadius="12dp"
-            android:id="@+id/electricalcard"
             app:cardElevation="6dp"
-            app:cardBackgroundColor="@color/warning_light"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1">
 
@@ -45,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:background="@color/warning_light"
                 android:gravity="center"
                 android:padding="16dp">
 
@@ -72,7 +72,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:cardCornerRadius="12dp"
-            android:id="@+id/fuelemission"
             app:cardBackgroundColor="@color/warning_light"
             app:cardElevation="6dp"
             app:layout_columnWeight="1"
@@ -83,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@color/warning_light"
+
                 android:padding="16dp">
 
                 <ImageView
@@ -95,7 +94,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fuel Combustion"
+                    android:text="Fuel Emission"
                     android:textSize="16sp"
                     android:textAlignment="center"
                     android:textStyle="bold"
@@ -107,11 +106,10 @@
         <!-- Flight Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
-            android:id="@+id/flightemission"
-            app:cardBackgroundColor="@color/warning_light"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:cardCornerRadius="12dp"
+            app:cardBackgroundColor="@color/warning_light"
             app:cardElevation="6dp"
             app:layout_rowWeight="1"
             app:layout_columnWeight="1">
@@ -148,8 +146,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:cardCornerRadius="12dp"
+            android:id="@+id/transportemission"
             app:cardElevation="6dp"
-            android:id="@+id/vehicleemission"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1">
 
@@ -170,7 +168,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Vehicle Estimates"
+                    android:text="Transport Emission"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textAlignment="center"
@@ -185,10 +183,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/warning_light"
+            android:id="@+id/industryemission"
             app:cardElevation="6dp"
             app:layout_columnWeight="1"
-            android:id="@+id/shippingemission"
             app:layout_rowWeight="1">
 
             <LinearLayout
@@ -196,6 +193,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
+                android:background="@color/warning_light"
                 android:padding="16dp">
 
                 <ImageView
@@ -205,12 +203,12 @@
                     android:src="@drawable/ic_add"
 
 
-                   />
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Shipping  Estimation"
+                    android:text="Industry Emission"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textAlignment="center"
