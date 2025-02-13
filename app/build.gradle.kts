@@ -48,12 +48,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.protolite.well.known.types)
+    implementation(libs.androidx.gridlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation ("com.google.android.material:material:1.9.0")
     implementation (libs.mpandroidchart)
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
 
         implementation( platform("com.google.firebase:firebase-bom:32.2.3"))  // Use latest BOM version
         implementation("com.google.firebase:firebase-auth")

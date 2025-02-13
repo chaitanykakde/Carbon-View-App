@@ -3,8 +3,10 @@ package com.chaitany.carbonview;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AddData extends AppCompatActivity {
     private static final int FILE_SELECT_CODE = 1;
@@ -100,9 +103,15 @@ public class AddData extends AppCompatActivity {
 
     private void openFileChooser() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        startActivityForResult(intent, FILE_SELECT_CODE);
+        intent.setType("text/*");  // Base text type filter
+        String[] mimeTypes = {"text/csv", "text/comma-separated-values", "text/plain"};  // Allowed MIME types
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+
+        // Create chooser with explicit title to guide user
+        Intent chooser = Intent.createChooser(intent, "Select CSV File");
+        startActivityForResult(chooser, FILE_SELECT_CODE);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -111,68 +120,154 @@ public class AddData extends AppCompatActivity {
         if (requestCode == FILE_SELECT_CODE && resultCode == RESULT_OK && data != null) {
             Uri fileUri = data.getData();
             if (fileUri != null) {
-                uploadFileToFirebase(fileUri);
+                // Get file name with extension
+                String fileName = getFileName(fileUri);
+
+                // Validate CSV extension
+                if (fileName != null && fileName.toLowerCase().endsWith(".csv")) {
+                    uploadFileToFirebase(fileUri);
+                } else {
+                    // Show error message for invalid file type
+                    Toast.makeText(this, "Please select a CSV file", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
 
-    private void uploadFileToFirebase(Uri fileUri) {
-        String fileName = System.currentTimeMillis() + "_" + fileUri.getLastPathSegment();
-        StorageReference fileRef = storageReference.child(fileName);
-
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setCustomMetadata("userId", auth.getCurrentUser ().getUid())  // Store user ID in metadata
-                .build();
-
-        progressDialog.show();
-
-        fileRef.putFile(fileUri, metadata)
-                .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String fileUrl = uri.toString();
-                    String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-
-                    // Save metadata in Firebase Realtime Database
-                    UploadItem uploadItem = new UploadItem(fileName, date, fileUrl, auth.getCurrentUser ().getUid());
-                    databaseReference.push().setValue(uploadItem)
-                            .addOnSuccessListener(aVoid -> {
-                                progressDialog.dismiss();
-                                Toast.makeText(this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(this, "Database update failed", Toast.LENGTH_SHORT).show();
-                                progressDialog.dismiss();
-                            });
-
-                })).addOnFailureListener(e -> {
-                    Toast.makeText(this, "File upload failed", Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                });
+    // Helper method to get file name from URI
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
-    private void loadUploadedFiles() {
-        // Fetching file data from Firebase Realtime Database
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                uploadList.clear();
-                if (!snapshot.exists()) {
-                    Toast.makeText(AddData.this, "No files found", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+    private void uploadFileToFirebase(Uri fileUri) {
+        // Fetch the current user's uploads from the database to count the files already uploaded
+        String userId = auth.getCurrentUser().getUid();
+        DatabaseReference userUploadsReference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("uploads");
 
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    UploadItem uploadItem = dataSnapshot.getValue(UploadItem.class);
-                    if (uploadItem != null) {
-                        uploadList.add(uploadItem);
-                    }
-                }
-                uploadAdapter.notifyDataSetChanged();
+        // Get the current month and year using SimpleDateFormat
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+        String currentMonth = monthFormat.format(new Date());
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
+        String currentYear = yearFormat.format(new Date());
+
+        // Query to get the count of existing files for the user
+        userUploadsReference.orderByChild("uploadDate").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int fileCount = (int) dataSnapshot.getChildrenCount();  // Count the number of existing files
+
+                // Construct the new file name: first_fileX_Month_Year
+                String fileName = "Data"+ (fileCount + 1) + "_" + currentMonth + "_" + currentYear;
+
+                // Create a reference to the file in Firebase Storage
+                StorageReference fileRef = storageReference.child(fileName);
+
+                // Create metadata with user ID
+                StorageMetadata metadata = new StorageMetadata.Builder()
+                        .setCustomMetadata("userId", userId)  // Store user ID in metadata
+                        .build();
+
+                // Show the progress dialog
+                progressDialog.show();
+
+                // Upload the file to Firebase Storage
+                fileRef.putFile(fileUri, metadata)
+                        .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String fileUrl = uri.toString();
+                            String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
+                            // Create an UploadItem object to save in the database
+                            UploadItem uploadItem = new UploadItem(fileName, date, fileUrl, userId);
+
+                            // Save the metadata in Firebase Realtime Database
+                            userUploadsReference.push().setValue(uploadItem)
+                                    .addOnSuccessListener(aVoid -> {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(AddData.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(AddData.this, "Database update failed", Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
+                                    });
+
+                        })).addOnFailureListener(e -> {
+                            Toast.makeText(AddData.this, "File upload failed", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        });
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AddData.this, "Failed to load uploads", Toast.LENGTH_SHORT).show();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(AddData.this, "Failed to count files", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    private void loadUploadedFiles() {
+        String userId = auth.getCurrentUser().getUid();
+        StorageReference storageRef = storageReference; // Your root storage reference
+
+        storageRef.listAll()
+                .addOnSuccessListener(listResult -> {
+                    uploadList.clear();
+                    List<StorageReference> items = listResult.getItems();
+
+                    if (items.isEmpty()) {
+                        Toast.makeText(AddData.this, "No files found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    AtomicInteger processedCount = new AtomicInteger(0);
+                    for (StorageReference itemRef : items) {
+                        itemRef.getMetadata().addOnSuccessListener(metadata -> {
+                            // Check if the file belongs to current user
+                            String fileUserId = metadata.getCustomMetadata("userId");
+                            if (userId.equals(fileUserId)) {
+                                itemRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    // Create date from metadata
+                                    String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                            .format(new Date(metadata.getCreationTimeMillis()));
+
+                                    uploadList.add(new UploadItem(
+                                            itemRef.getName(),
+                                            date,
+                                            uri.toString(),
+                                            userId
+                                    ));
+
+                                    // Update adapter when all files processed
+                                    if (processedCount.incrementAndGet() == items.size()) {
+                                        uploadAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                            } else {
+                                if (processedCount.incrementAndGet() == items.size()) {
+                                    uploadAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }).addOnFailureListener(e -> {
+                            processedCount.incrementAndGet();
+                        });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AddData.this, "Failed to load files: " + e.getMessage(), Toast.LENGTH_SHORT). show();
+                });
     }
 }
