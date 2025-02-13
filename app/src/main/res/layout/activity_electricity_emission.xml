@@ -45,14 +45,69 @@
         android:layout_marginTop="20dp"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/electricityResult"
-            android:layout_width="wrap_content"
+        <!-- Added a LinearLayout for proper alignment -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Electricity Emission: -- kg CO₂"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/electricityResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Electricity Emission: -- kg CO₂"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/carbonG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carbon Emission (g): --"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/carbonLb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carbon Emission (lb): --"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/carbonKg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carbon Emission (kg): --"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/carbonMt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carbon Emission (mt): --"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/estimatedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Estimated At: --"
+                android:textSize="14sp"
+                android:textColor="@color/gray"
+                android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
 </LinearLayout>
