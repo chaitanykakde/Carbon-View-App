@@ -37,14 +37,14 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/logoapp"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/logoapp"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CarbonView"
         tools:targetApi="31">
         <activity
-            android:name=".VehicleReport"
+            android:name=".CompanyFinalEmissionData"
             android:exported="false" />
         <activity
             android:name=".FuelBillScan"
@@ -70,9 +70,7 @@
         <activity
             android:name=".EstimationGrid"
             android:exported="false" />
-        <activity
-            android:name=".apiiii"
-            android:exported="false" />
+
         <activity
             android:name=".AnalyzeActivity"
             android:exported="false" />
@@ -118,9 +116,7 @@
         <activity
             android:name=".ForgotPassword"
             android:exported="false" />
-        <activity
-            android:name=".AiActivity"
-            android:exported="false" />
+
         <activity
             android:name=".AboutActivity"
             android:exported="false" />

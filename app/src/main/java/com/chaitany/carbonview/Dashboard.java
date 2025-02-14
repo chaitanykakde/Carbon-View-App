@@ -58,7 +58,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     private void setUponClickListener() {
         adddata.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, AddData.class)));
         uploadreport.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, UploadReport.class)));
-        viewreport.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, ViewReport.class)));
+        viewreport.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, CompanyFinalEmissionData.class)));
         aiinsights.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, EstimationGrid.class)));
         Connectiot.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, ConnectIOT.class)));
         compare.setOnClickListener(view -> startActivity(new Intent(Dashboard.this, Compare.class)));
