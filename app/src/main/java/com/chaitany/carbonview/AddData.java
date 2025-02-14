@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,6 +48,7 @@ public class AddData extends AppCompatActivity {
     private StorageReference storageReference;
     private FirebaseAuth auth;
 
+
     private Dialog progressDialog;
     private MaterialTextView progressText;
 
@@ -68,6 +70,7 @@ public class AddData extends AppCompatActivity {
         uploadAdapter = new UploadsAdapter(this, uploadList);
         uploadsRecyclerView.setAdapter(uploadAdapter);
 
+
         // Initialize Firebase
         auth = FirebaseAuth.getInstance();
         FirebaseUser  currentUser  = auth.getCurrentUser ();
@@ -83,7 +86,7 @@ public class AddData extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("uploads");
         storageReference = FirebaseStorage.getInstance().getReference("uploads").child(userId);
 
-        ImageButton backButton = findViewById(R.id.backButton);
+        ImageView backButton = findViewById(R.id.back);
         materialCardView=findViewById(R.id.manualEntryCard);
         MaterialCardView fileUploadCard = findViewById(R.id.fileUploadCard);
 
