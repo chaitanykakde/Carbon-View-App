@@ -206,18 +206,19 @@ class IOTReport : AppCompatActivity() {
     private fun loadEmissionData() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val emissionList = mutableListOf<EmissionData>()
+                val emissionList = mutableListOf<CarbonEmission>()
 
                 // Iterate through all emission records
                 for (dataSnapshot in snapshot.children) {
-                    val emission = dataSnapshot.getValue(EmissionData::class.java)
+                    val emission = dataSnapshot.getValue(CarbonEmission::class.java)
                     if (emission != null) {
                         emissionList.add(emission)
                     }
                 }
 
-                // Process emissions
-                updateUI(emissionList)
+                // Classify and process emissions
+                val classifiedEmissions = ClassificationEngine.classifyAndCalculate(emissionList)
+                updateUI(emissionList, classifiedEmissions)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -226,47 +227,44 @@ class IOTReport : AppCompatActivity() {
         })
     }
 
-    private fun updateUI(emissionList: List<EmissionData>) {
+    private fun updateUI(emissionList: MutableList<CarbonEmission>, classifiedEmissions: Map<String, Double>) {
         var totalEmission = 0.0
-        var scope1 = 0.0
-        var scope2 = 0.0
-        var scope3 = 0.0
-        val monthlyEmissions = mutableMapOf<String, Double>() // Store monthly emissions
+        val monthlyEmissions = mutableMapOf<String, Double>()
 
-        for (emission in emissionList) {
-            totalEmission += emission.Emission
+        val scope1 = classifiedEmissions["Scope 1"] ?: 0.0
+        val scope2 = classifiedEmissions["Scope 2"] ?: 0.0
+        val scope3 = classifiedEmissions["Scope 3"] ?: 0.0
+        totalEmission = scope1 + scope2 + scope3
 
-            when (emission.Scope) {
-                "Scope 1" -> scope1 += emission.Emission
-                "Scope 2" -> scope2 += emission.Emission
-                "Scope 3" -> scope3 += emission.Emission
+        if (emissionList.isNotEmpty()) {
+            for (emission in emissionList) {
+                val month = if (emission.date.contains("/")) {
+                    emission.date.split("/")[1]
+                } else {
+                    emission.date.split("-")[1]
+                }
+                monthlyEmissions[month] = (monthlyEmissions[month] ?: 0.0) + emission.emissionFactor
             }
 
-            // Extract month from Date (Format: "DD/MM/YYYY" or "YYYY-MM-DD")
-            val month = if (emission.Date.contains("/")) {
-                emission.Date.split("/")[1]  // Get MM part from DD/MM/YYYY
-            } else {
-                emission.Date.split("-")[1]  // Get MM part from YYYY-MM-DD
-            }
+            // Update UI elements
+            scope1Text.text = "Scope 1: %.2f kg".format(scope1)
+            scope2Text.text = "Scope 2: %.2f kg".format(scope2)
+            scope3Text.text = "Scope 3: %.2f kg".format(scope3)
+            carbonFootprint.text = "%.2f kg CO₂e".format(totalEmission)
 
-            monthlyEmissions[month] = (monthlyEmissions[month] ?: 0.0) + emission.Emission
+            val previousYearEmission = totalEmission * 0.88  // Assume 12% increase
+            val percentageIncrease = ((totalEmission - previousYearEmission) / previousYearEmission) * 100
+            carbonIncrease.text = "+%.2f%% vs Previous Year".format(percentageIncrease)
+
+            // Update Charts
+            setupPieChart(scope1, scope2, scope3)
+            setupLineChart(monthlyEmissions)
+        } else {
+            Log.e("UpdateUI", "No data available for classification")
         }
-
-        // Update TextViews
-        scope1Text.text = "Scope 1: %.1f kg".format(scope1)
-        scope2Text.text = "Scope 2: %.1f kg".format(scope2)
-        scope3Text.text = "Scope 3: %.1f kg".format(scope3)
-        carbonFootprint.text = "%.1f kg CO₂e".format(totalEmission)
-
-        // Calculate Percentage Increase (Dummy Previous Year Data)
-        val previousYearEmission = totalEmission * 0.88  // Assume 12% increase
-        val percentageIncrease = ((totalEmission - previousYearEmission) / previousYearEmission) * 100
-        carbonIncrease.text = "+%.1f%% vs Previous Year".format(percentageIncrease)
-
-        // Update Charts
-        setupPieChart(scope1, scope2, scope3)
-        setupLineChart(monthlyEmissions)
     }
+
+
 
     private fun setupPieChart(scope1: Double, scope2: Double, scope3: Double) {
         val entries = listOf(
