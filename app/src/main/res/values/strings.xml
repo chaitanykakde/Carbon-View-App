@@ -18,6 +18,22 @@
         <item>Mining</item>
         <item>Construction</item>
     </string-array>
+    <string name="title_activity_company_emissions">Company Emissions</string>
+    <string name="total_vehicles">Total Vehicles</string>
+    <string name="total_kilometers">Total Kilometers</string>
+    <string name="total_emissions">Total Emissions</string>
+    <string name="scope1_title">Scope 1 Emissions</string>
+    <string name="scope2_title">Scope 2 Emissions</string>
+    <string name="scope3_title">Scope 3 Emissions</string>
+    <string name="data_updated">Data updated daily from IoT devices</string>
+    <string name="download_report">Download Report</string>
+
+    <string-array name="date_ranges">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Custom</item>
+    </string-array>
     <string-array name="fuel_types">
         <item>Petrol</item>
         <item>Diesel</item>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <color name="bg">#E9F6EA</color>
     <color name="black">#FF000000</color>
     <color name="primary">#0D9488</color>
     <color name="secondary">#400D9488</color>
@@ -11,6 +10,10 @@
     <color name="gray_600">#4B5563</color>
     <color name="gray_800">#1F2937</color>
     <color name="teal_50">#F0FDFA</color>
+    <color name="scope1_color">#FF6B6B</color>
+    <color name="scope2_color">#4D96FF</color>
+    <color name="scope3_color">#6BCB77</color>
+    <color name="card_background">#FFFFFF</color>
     <color name="teal_600">#0D9488</color>
     <color name="lightGreen">#E0F2F1</color>
     <color name="white">#FFFFFF</color>
@@ -21,6 +24,7 @@
     <color name="obese">#FFCDD2</color>
     <color name="primary_dark">#0D6D65</color>
     <color name="accent">#03DAC5</color>
+    <color name="bg">#E9F6EA</color>
 
     <color name="blue">#1E40AF</color>
     <color name="blue_light">#DBEAFE</color>
