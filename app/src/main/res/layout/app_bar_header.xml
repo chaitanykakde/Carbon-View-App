@@ -40,7 +40,7 @@
                 android:id="@+id/menuIcon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/ic_menu"
+                android:src="@drawable/email"
             android:contentDescription="menu"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
@@ -110,7 +110,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    app:icon="@drawable/ic_profile"
+                    app:icon="@drawable/ic_user"
                 app:iconTint="?attr/colorOnSurface"
                 android:contentDescription="profile"
                 android:focusable="true"/>
