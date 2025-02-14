@@ -38,7 +38,18 @@
         android:id="@+id/btn_connect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Connect"
+        android:text="Connect To IOT Senors"
+        android:layout_marginTop="20dp"
+        app:cornerRadius="16dp"
+        app:icon="@android:drawable/ic_menu_send"
+        app:iconGravity="textStart"
+        android:textSize="18sp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_connect_vehicles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connect to Vehicles"
         android:layout_marginTop="20dp"
         app:cornerRadius="16dp"
         app:icon="@android:drawable/ic_menu_send"

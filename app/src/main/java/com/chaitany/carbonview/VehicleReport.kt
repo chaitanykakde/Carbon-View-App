@@ -1,17 +1,12 @@
 package com.chaitany.carbonview
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.data.*
 import com.google.firebase.database.*
 import com.google.android.material.textview.MaterialTextView
 
@@ -21,6 +16,10 @@ class VehicleReport : AppCompatActivity() {
     private lateinit var carRef: DatabaseReference
     private lateinit var bikeRef: DatabaseReference
 
+    private lateinit var carKmText: MaterialTextView
+    private lateinit var carCO2Text: MaterialTextView
+    private lateinit var bikeKmText: MaterialTextView
+    private lateinit var bikeCO2Text: MaterialTextView
     private lateinit var totalKmText: MaterialTextView
     private lateinit var totalCO2Text: MaterialTextView
     private lateinit var pieChart: PieChart
@@ -39,6 +38,10 @@ class VehicleReport : AppCompatActivity() {
         bikeRef = database.getReference("bike_data")
 
         // Initialize Views
+        carKmText = findViewById(R.id.carKmText)
+        carCO2Text = findViewById(R.id.carCO2Text)
+        bikeKmText = findViewById(R.id.bikeKmText)
+        bikeCO2Text = findViewById(R.id.bikeCO2Text)
         totalKmText = findViewById(R.id.totalKmText)
         totalCO2Text = findViewById(R.id.totalCO2Text)
         pieChart = findViewById(R.id.pieChart)
@@ -48,7 +51,6 @@ class VehicleReport : AppCompatActivity() {
     }
 
     private fun fetchVehicleData() {
-        // Fetch car data
         carRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 totalCarKm = 0.0
@@ -66,7 +68,6 @@ class VehicleReport : AppCompatActivity() {
     }
 
     private fun fetchBikeData() {
-        // Fetch bike data
         bikeRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 totalBikeKm = 0.0
@@ -88,24 +89,33 @@ class VehicleReport : AppCompatActivity() {
         val bikeCO2 = (totalBikeKm / 40) * 2.32 // Bike CO2 in kg
         val totalCO2 = carCO2 + bikeCO2
 
-        totalKmText.text = "Total Distance Driven: ${totalCarKm + totalBikeKm} km"
-        totalCO2Text.text = "Total CO₂ Emissions: ${"%.2f".format(totalCO2)} kg"
+        carKmText.text = "Car Distance: %.2f km".format(totalCarKm)
+        carCO2Text.text = "Car CO₂: %.2f kg".format(carCO2)
+        bikeKmText.text = "Bike Distance: %.2f km".format(totalBikeKm)
+        bikeCO2Text.text = "Bike CO₂: %.2f kg".format(bikeCO2)
+        totalKmText.text = "Total Distance Driven: %.2f km".format(totalCarKm + totalBikeKm)
+        totalCO2Text.text = "Total CO₂ Emissions: %.2f kg".format(totalCO2)
 
-        // Update Pie Chart
+        updateCharts(carCO2, bikeCO2)
+    }
+
+    private fun updateCharts(carCO2: Double, bikeCO2: Double) {
         val pieEntries = listOf(
             PieEntry(carCO2.toFloat(), "Car"),
             PieEntry(bikeCO2.toFloat(), "Bike")
         )
-        val pieDataSet = PieDataSet(pieEntries, "CO₂ Emissions").apply { setColors(0xFFFF0000.toInt(), 0xFF0000FF.toInt()) }
+        val pieDataSet = PieDataSet(pieEntries, "CO₂ Emissions")
+        pieDataSet.colors = listOf(Color.BLUE, Color.RED) // Car - Blue, Bike - Red
         pieChart.data = PieData(pieDataSet)
+        pieChart.setUsePercentValues(true)
         pieChart.invalidate()
 
-        // Update Bar Chart
         val barEntries = listOf(
             BarEntry(1f, carCO2.toFloat()),
             BarEntry(2f, bikeCO2.toFloat())
         )
         val barDataSet = BarDataSet(barEntries, "CO₂ Emissions")
+        barDataSet.colors = listOf(Color.GREEN, Color.MAGENTA) // Car - Green, Bike - Magenta
         barChart.data = BarData(barDataSet)
         barChart.invalidate()
     }
