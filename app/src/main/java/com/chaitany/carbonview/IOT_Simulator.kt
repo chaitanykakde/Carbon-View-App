@@ -67,11 +67,11 @@ class IOT_Simulator : AppCompatActivity() {
                     // Ensure that retrieved data is not null
                     if (emissionData != null && emissionData.activityType.isNotBlank()) {
                         emissionsList.add(emissionData)
-                        if(emissionData.consumptionAmount*emissionData.emissionFactor > 12000){
-                            showWarningDialog(emissionData)
-                            speakWarning(emissionData)
-
-                        }
+//                        if(emissionData.consumptionAmount*emissionData.emissionFactor > 12000){
+//                            showWarningDialog(emissionData)
+//                            speakWarning(emissionData)
+//
+//                        }
                     } else {
                         Log.e("FirebaseError", "Null or Invalid emission data")
                     }
