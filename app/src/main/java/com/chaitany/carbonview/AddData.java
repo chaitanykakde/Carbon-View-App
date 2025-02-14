@@ -189,6 +189,7 @@ public class AddData extends AppCompatActivity {
                 fileRef.putFile(fileUri, metadata)
                         .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                             String fileUrl = uri.toString();
+                            Log.d("SSS",fileUrl);
                             String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
                             // Create an UploadItem object to save in the database
