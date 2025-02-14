@@ -95,11 +95,7 @@ greener future together!"
         android:layout_gravity="bottom"
         android:weightSum="2">
         
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/ic_security"/>
+
         <TextView
             android:layout_width="140dp"
             android:layout_height="22dp"

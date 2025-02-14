@@ -55,7 +55,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:src="@drawable/img_app"
+                    android:src="@drawable/app_logo"
                     android:contentDescription="Screenshot of the app showing its main features"
                     android:scaleType="centerCrop"
                     android:layout_gravity="center_horizontal"

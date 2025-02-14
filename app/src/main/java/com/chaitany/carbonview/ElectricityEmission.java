@@ -32,7 +32,7 @@ public class ElectricityEmission extends AppCompatActivity {
     private Button btnCalculate;
 
     private static final String API_URL = "https://www.carboninterface.com/api/v1/estimates";
-    private static final String API_KEY = "EEjDUmc5BvD0n5ibNojQ"; // Replace with actual API key
+    private static final String API_KEY = "EEjDUmc5BvD0n5ibNojQ";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     @Override

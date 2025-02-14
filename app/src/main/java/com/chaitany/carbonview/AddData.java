@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AddData extends AppCompatActivity {
@@ -166,68 +167,56 @@ public class AddData extends AppCompatActivity {
     }
 
     private void uploadFileToFirebase(Uri fileUri) {
-        // Fetch the current user's uploads from the database to count the files already uploaded
         String userId = auth.getCurrentUser().getUid();
         DatabaseReference userUploadsReference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("uploads");
 
-        // Get the current month and year using SimpleDateFormat
+        // Get the current month and year
         SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
         String currentMonth = monthFormat.format(new Date());
         SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
         String currentYear = yearFormat.format(new Date());
 
-        // Query to get the count of existing files for the user
-        userUploadsReference.orderByChild("uploadDate").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int fileCount = (int) dataSnapshot.getChildrenCount();  // Count the number of existing files
+        // Generate a random number between 1 and 20
+        int randomNum = new Random().nextInt(20) + 1;
 
-                // Construct the new file name: first_fileX_Month_Year
-                String fileName = "Data"+ (fileCount + 1) + "_" + currentMonth + "_" + currentYear;
+        // Construct the file name with random number
+        String fileName = "Data" + randomNum + "_" + currentMonth + "_" + currentYear;
 
-                // Create a reference to the file in Firebase Storage
-                StorageReference fileRef = storageReference.child(fileName);
+        StorageReference fileRef = storageReference.child(fileName);
 
-                // Create metadata with user ID
-                StorageMetadata metadata = new StorageMetadata.Builder()
-                        .setCustomMetadata("userId", userId)  // Store user ID in metadata
-                        .build();
+        // Create metadata with user ID
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setCustomMetadata("userId", userId)
+                .build();
 
-                // Show the progress dialog
-                progressDialog.show();
+        progressDialog.show();
 
-                // Upload the file to Firebase Storage
-                fileRef.putFile(fileUri, metadata)
-                        .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String fileUrl = uri.toString();
-                            String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+        // Upload the file to Firebase Storage
+        fileRef.putFile(fileUri, metadata)
+                .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String fileUrl = uri.toString();
+                    String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
-                            // Create an UploadItem object to save in the database
-                            UploadItem uploadItem = new UploadItem(fileName, date, fileUrl, userId);
+                    // Create an UploadItem object to save in the database
+                    UploadItem uploadItem = new UploadItem(fileName, date, fileUrl, userId);
 
-                            // Save the metadata in Firebase Realtime Database
-                            userUploadsReference.push().setValue(uploadItem)
-                                    .addOnSuccessListener(aVoid -> {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(AddData.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(AddData.this, "Database update failed", Toast.LENGTH_SHORT).show();
-                                        progressDialog.dismiss();
-                                    });
+                    // Save the metadata in Firebase Realtime Database
+                    userUploadsReference.push().setValue(uploadItem)
+                            .addOnSuccessListener(aVoid -> {
+                                progressDialog.dismiss();
+                                Toast.makeText(AddData.this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(AddData.this, "Database update failed", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                            });
 
-                        })).addOnFailureListener(e -> {
-                            Toast.makeText(AddData.this, "File upload failed", Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
-                        });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(AddData.this, "Failed to count files", Toast.LENGTH_SHORT).show();
-            }
-        });
+                })).addOnFailureListener(e -> {
+                    Toast.makeText(AddData.this, "File upload failed", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                });
     }
+
 
 
     private void loadUploadedFiles() {

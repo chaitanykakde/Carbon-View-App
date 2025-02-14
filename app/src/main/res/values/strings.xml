@@ -2,6 +2,34 @@
     <string name="app_name">Carbon View</string>
     <string name="open_drawer">Open Drawer</string>
     <string name="close_drawer">Close Drawer</string>
+    <string-array name="weight_units">
+        <item>Grams (g)</item>
+        <item>Pounds (lb)</item>
+        <item>Kilograms (kg)</item>
+        <item>Tonnes (mt)</item>
+    </string-array>
+
+    <string-array name="distance_units">
+        <item>Kilometers (km)</item>
+        <item>Miles (mi)</item>
+    </string-array>
+    <string-array name="industry_types">
+        <item>Manufacturing</item>
+        <item>Mining</item>
+        <item>Construction</item>
+    </string-array>
+    <string-array name="fuel_types">
+        <item>Petrol</item>
+        <item>Diesel</item>
+        <item>Gas</item>
+    </string-array>
+
+    <string-array name="transport_methods">
+        <item>Truck</item>
+        <item>Ship</item>
+        <item>Train</item>
+        <item>Plane</item>
+    </string-array>
 
     <string name="hint_text">a</string>
     <string name="aboutapp"><![CDATA[Welcome to AgeWell! \n🌟 Your companion for a healthier and happier life as you age. Our app is designed to support older adults with easy-to-use features that help you stay active, healthy, and connected. 🧑‍🦳💪\n\nFeatures:\n\nPersonalized Exercise Plans : Get daily exercise routines based on your age, weight, and fitness level.\n\nHealth Monitoring ❤️: Track important health metrics and set reminders for medications and doctor visits.\n\nMedication & Emergency Alerts : Never miss a dose! Get timely reminders for your medications and emergency contacts.\n\nStay Connected : Connect with family and friends, share moments, and stay social.\nDaily Tips & Motivation : Receive helpful tips and positive messages every day.\n\nEasy to Use 📱: Simple, accessible design with larger text and easy navigation.\nAgeWell is here to help you age gracefully and live your best life! 😊]]></string>

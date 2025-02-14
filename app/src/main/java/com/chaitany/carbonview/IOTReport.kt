@@ -1,7 +1,9 @@
 package com.chaitany.carbonview
 
+import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -14,15 +16,25 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.button.MaterialButton
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -140,9 +152,10 @@ class IOTReport : AppCompatActivity() {
         document.finishPage(page)
 
         val fileName = "IOT_Report_${getCurrentDate()}.pdf"
+        var fileUri: Uri? = null
 
-        val file: File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // ✅ Android 11+ (Scoped Storage) - Use MediaStore API
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // ✅ Android 10+ (Scoped Storage) - Save via MediaStore API
             val contentValues = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, fileName)
                 put(MediaStore.Downloads.MIME_TYPE, "application/pdf")
@@ -150,30 +163,49 @@ class IOTReport : AppCompatActivity() {
             }
 
             val resolver = contentResolver
-            val uri: Uri? = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
 
             uri?.let {
                 resolver.openOutputStream(it)?.use { outputStream ->
                     document.writeTo(outputStream)
                 }
+                fileUri = it // Store the URI to open later
             }
-
-            File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
         } else {
-            // ✅ Android 10 and below - Save in the Public Downloads Folder
+            // ✅ Android 9 and below - Save in the Public Downloads Folder
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            File(downloadsDir, fileName)
+            val file = File(downloadsDir, fileName)
+
+            try {
+                val fos = FileOutputStream(file)
+                document.writeTo(fos)
+                fos.close()
+                fileUri = Uri.fromFile(file) // Get file URI
+            } catch (e: Exception) {
+                Log.e("PDF_ERROR", "Error saving PDF: ${e.message}")
+                showMessage("Failed to save PDF")
+            }
         }
 
+        document.close()
+        showMessage("PDF Saved Successfully")
+
+        // ✅ Open PDF after saving
+        fileUri?.let { openPDF(it) }
+    }
+
+
+    private fun openPDF(fileUri: Uri) {
+        val openPdfIntent = Intent(Intent.ACTION_VIEW)
+        openPdfIntent.setDataAndType(fileUri, "application/pdf")
+        openPdfIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        openPdfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
         try {
-            val fos = FileOutputStream(file)
-            document.writeTo(fos)
-            document.close()
-            fos.close()
-            showMessage("PDF Saved in Downloads: ${file.absolutePath}")
-        } catch (e: Exception) {
-            Log.e("PDF_ERROR", "Error saving PDF: ${e.message}")
-            showMessage("Failed to save PDF")
+            startActivity(openPdfIntent)
+            Toast.makeText(this, "PDF Opened Successfully", Toast.LENGTH_SHORT).show()
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, "No app found to open PDF", Toast.LENGTH_SHORT).show()
         }
     }
 
