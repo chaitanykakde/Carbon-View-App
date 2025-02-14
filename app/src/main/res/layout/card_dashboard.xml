@@ -33,7 +33,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Today's Emissions"
+                    android:text="Monthly Emissions"
                     android:textColor="#757575"
                     android:textSize="14sp"/>
 
@@ -42,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="450 kg CO₂"
+                    android:text="12,000 kg CO₂"
                     android:textColor="#212121"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
@@ -63,7 +63,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Monthly Emissions"
+                    android:text="Total Emissions"
                     android:textColor="#757575"
                     android:textSize="14sp"/>
 
@@ -72,7 +72,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="12,300 kg CO₂"
+                    android:text="52,300 kg CO₂"
                     android:textColor="#212121"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
