@@ -51,6 +51,7 @@ public class AddData extends AppCompatActivity {
 
     private RecyclerView uploadsRecyclerView;
     private UploadsAdapter uploadAdapter;
+    private MaterialCardView materialCardView;
     private List<UploadItem> uploadList;
 
     @Override
@@ -82,6 +83,7 @@ public class AddData extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference("uploads").child(userId);
 
         ImageButton backButton = findViewById(R.id.backButton);
+        materialCardView=findViewById(R.id.manualEntryCard);
         MaterialCardView fileUploadCard = findViewById(R.id.fileUploadCard);
 
         backButton.setOnClickListener(v -> onBackPressed());
@@ -91,6 +93,15 @@ public class AddData extends AppCompatActivity {
 
         // Call after initializing adapter
         loadUploadedFiles();
+
+        materialCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(AddData.this,EstimationGrid.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
     private void setupProgressDialog() {

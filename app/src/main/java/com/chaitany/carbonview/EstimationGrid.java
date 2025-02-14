@@ -2,6 +2,8 @@ package com.chaitany.carbonview;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import com.google.android.material.card.MaterialCardView;
 
 public class EstimationGrid extends AppCompatActivity {
     CardView electricityCard, fuelCard, flightCard, transportCard, industryCard;
+    Button scan;
 
 
     @Override
@@ -32,6 +35,7 @@ public class EstimationGrid extends AppCompatActivity {
         flightCard = findViewById(R.id.flightemission);
         transportCard = findViewById(R.id.transportemission);
         industryCard = findViewById(R.id.industryemission);
+
 
         setuplonclicklistener();
 
