@@ -47,6 +47,9 @@
             android:name=".CompanyFinalEmissionData"
             android:exported="false" />
         <activity
+            android:name=".VehicleReport"
+            android:exported="false" />
+        <activity
             android:name=".FuelBillScan"
             android:exported="false" />
         <activity
