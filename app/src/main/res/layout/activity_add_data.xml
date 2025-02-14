@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:id="@+id/main"
     android:layout_height="match_parent"
-    android:background="@drawable/pagebg">
+    android:background="@color/bg">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -50,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/white"
                 app:cardElevation="4dp"
                 app:cardCornerRadius="12dp">
 
@@ -63,7 +64,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/ic_add"
+                        android:src="@drawable/manual_entry"
                         android:layout_marginEnd="16dp"/>
 
                     <LinearLayout
@@ -94,6 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
+                android:backgroundTint="@color/white"
                 app:cardElevation="4dp"
                 app:cardCornerRadius="12dp">
 
@@ -105,9 +107,9 @@
                     android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_add"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/file_uploadfile"
                     android:layout_marginEnd="16dp"/>
 
                     <LinearLayout
