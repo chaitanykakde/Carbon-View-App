@@ -10,23 +10,46 @@
     android:background="@color/white">
 
     <!-- Title -->
-    <TextView
-        android:id="@+id/title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Emission Calculation and  Estimation"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textColor="@color/primary_dark"
-        android:fontFamily="@font/medium"
-        android:paddingBottom="16dp"/>
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/backk"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Emission Calculation "
+            android:textSize="24dp"
+            android:textColor="@color/green"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
     <!-- Grid Layout for Cards -->
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        app:cardElevation="10dp">
+
+
+
     <androidx.gridlayout.widget.GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
+        android:layout_marginTop="20dp"
         app:columnCount="2"
         app:rowCount="3">
 
@@ -45,15 +68,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/warning_light"
+                android:background="@color/bg"
                 android:gravity="center"
                 android:padding="16dp">
 
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_add"
-                    android:tint="@color/red"/>
+                    android:src="@drawable/electricity_manual"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -82,8 +104,9 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:background="@color/bg"
                 android:gravity="center"
 
                 android:padding="16dp">
@@ -91,8 +114,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_add"
-                    android:tint="@color/red"/>
+                    android:src="@drawable/fuel_emission"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -120,7 +142,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/bg"
                 android:orientation="vertical"
                 android:gravity="center"
 
@@ -129,8 +152,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_add"
-                    android:tint="@color/red"/>
+                    android:src="@drawable/flight_emission"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -157,17 +179,17 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
+                android:backgroundTint="@color/bg"
                 android:background="@color/warning_light"
                 android:padding="16dp">
 
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_add"
-                    android:tint="@color/red"/>
+                    android:src="@drawable/transport_emission"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -197,17 +219,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
+                android:backgroundTint="@color/bg"
                 android:background="@color/warning_light"
                 android:padding="16dp">
 
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:tint="@color/red"
-                    android:src="@drawable/ic_add"
-
-
-                    />
+                    android:src="@drawable/factory_emission"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -222,6 +241,7 @@
         </androidx.cardview.widget.CardView>
 
     </androidx.gridlayout.widget.GridLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 
 </LinearLayout>
