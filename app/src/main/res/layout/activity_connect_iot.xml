@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="?android:attr/colorBackground"
+    android:background="@color/bg"
     tools:context=".ConnectIOT">
 
 
@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -42,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:padding="16dp"
-        android:backgroundTint="@color/bg"
+        android:backgroundTint="@color/white"
         app:cardElevation="5dp">
 
         <LinearLayout
