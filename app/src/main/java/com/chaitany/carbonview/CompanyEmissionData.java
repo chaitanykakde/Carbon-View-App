@@ -6,6 +6,8 @@ public class CompanyEmissionData {
     private float scope2Value;
     private float scope3Value;
 
+    private float novale;
+
     public CompanyEmissionData(String period, float scope1Value, float scope2Value, float scope3Value) {
         this.period = period;
         this.scope1Value = scope1Value;
