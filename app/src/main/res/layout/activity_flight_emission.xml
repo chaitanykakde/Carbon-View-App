@@ -3,182 +3,222 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="@color/white">
 
-
-    <!-- Departure Airport Input -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="25dp"
-        android:fontFamily="@font/regular"
-        android:text="Calculate electricity consumption"
-        android:textAlignment="center"
-        android:textColor="@color/mint"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/departureLayout"
-        app:layout_constraintTop_toBottomOf="@+id/main"
-        app:layout_constraintVertical_bias="0.968"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="35dp">
-
-    </TextView>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/departureLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Departure Airport"
-        tools:ignore="MissingConstraints">
-        <EditText
-            android:id="@+id/departureAirport"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Destination Airport Input -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/destinationLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Destination Airport"
-        app:layout_constraintTop_toBottomOf="@id/departureLayout"
-        android:layout_marginTop="16dp">
-        <EditText
-            android:id="@+id/destinationAirport"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Number of Passengers Input -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passengerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Number of Passengers"
-        app:layout_constraintTop_toBottomOf="@id/destinationLayout"
-        android:layout_marginTop="16dp">
-        <EditText
-            android:id="@+id/passengerCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Calculate Button -->
-
-    <!-- Card to Display Results -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/calculateButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
-        android:text="Calculate Emission"
-        android:backgroundTint="@color/mint"
-        app:layout_constraintTop_toBottomOf="@id/passengerLayout"
-        tools:layout_editor_absoluteX="16dp" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/resultCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/calculateButton"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        app:strokeWidth="2dp"
-        app:strokeColor="@android:color/darker_gray"
-        app:rippleColor="@android:color/holo_blue_light"
-        android:visibility="gone">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
             android:orientation="vertical">
 
+            <!-- Title -->
             <TextView
-                android:id="@+id/emissionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Flight Carbon Emission"
-                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
                 android:textStyle="bold"
-                android:textColor="@android:color/black" />
+                android:textSize="20sp"
+                android:layout_marginBottom="25dp"
+                android:fontFamily="@font/regular"
+                android:textColor="@color/mint"
+                android:text="Calculate Flight Emission" />
 
-            <TextView
-                android:id="@+id/carbonKg2"
+            <!-- Departure Airport Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/departureLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Carbon Emission (kg): -"
-                android:textSize="16sp"
-                android:textColor="@android:color/holo_green_dark"
-                android:layout_marginTop="8dp" />
+                android:hint="Departure Airport">
+                <EditText
+                    android:id="@+id/departureAirport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="12dp"
+                    android:textSize="16sp"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/carbonG"
+            <!-- Destination Airport Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/destinationLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Carbon Emission (g): -"
-                android:textSize="16sp"
-                android:textColor="@android:color/holo_red_dark"
-                android:layout_marginTop="4dp" />
+                android:hint="Destination Airport"
+                android:layout_marginTop="16dp">
+                <EditText
+                    android:id="@+id/destinationAirport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="12dp"
+                    android:textSize="16sp"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/carbonLb"
+            <!-- Number of Passengers Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passengerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Carbon Emission (lb): -"
-                android:textSize="16sp"
-                android:textColor="@android:color/holo_red_dark"
-                android:layout_marginTop="4dp" />
+                android:hint="Number of Passengers"
+                android:layout_marginTop="16dp">
+                <EditText
+                    android:id="@+id/passengerCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:padding="12dp"
+                    android:textSize="16sp"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/carbonMt"
+            <!-- Calculate Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/calculateButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Carbon Emission (MT): -"
-                android:textSize="16sp"
-                android:textColor="@android:color/holo_red_dark"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="16dp"
+                android:text="Calculate Emission"
+                android:textSize="18sp"
+                android:backgroundTint="@color/primary"
+                android:textColor="@android:color/white"
+                android:padding="12dp" />
 
-            <TextView
-                android:id="@+id/distanceResult"
+            <!-- Result Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/resultCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Distance: - km"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@android:color/darker_gray"
+                android:visibility="gone"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/distanceUnit"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/emissionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Flight Carbon Emission"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <TextView
+                        android:id="@+id/carbonG"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Carbon Emission (g): --"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:layout_marginTop="12dp"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:id="@+id/carbonLb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Carbon Emission (lb): --"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:layout_marginTop="8dp"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:id="@+id/carbonKg2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Carbon Emission (kg): --"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:layout_marginTop="8dp"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:id="@+id/carbonMt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Carbon Emission (MT): --"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/holo_purple"
+                        android:layout_marginTop="8dp"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:id="@+id/distanceResult"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Distance: -- km"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginTop="8dp"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:id="@+id/distanceUnit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Distance Unit: --"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginTop="8dp"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:id="@+id/estimatedAt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Estimated At: --"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:textStyle="italic"
+                        android:layout_marginTop="16dp"
+                        android:textAlignment="center"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Container for the list item -->
+            <LinearLayout
+                android:id="@+id/listContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Distance Unit: -"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginTop="4dp" />
+                android:orientation="vertical"
+                android:layout_marginTop="16dp" />
 
+            <!-- TextView for total emissions -->
             <TextView
-                android:id="@+id/estimatedAt"
+                android:id="@+id/totalEmissions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estimated At: -"
+                android:text="Total Emissions for [Month]: 0.0 kg CO₂"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
-                android:textStyle="italic"
-                android:layout_marginTop="8dp" />
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:textAlignment="center"
+                android:visibility="gone" />
+
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,14 +2,29 @@ package com.chaitany.carbonview;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
+
+import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -18,18 +33,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 public class ElectricityEmission extends AppCompatActivity {
 
     private EditText inputElectricity;
-    private TextView electricityResult, carbonG, carbonLb, carbonKg, carbonMt, estimatedAt;
-    private CardView resultCard;
+    private TextView electricityResult, carbonG, carbonLb, carbonKg, carbonMt, estimatedAt, totalEmissions;
+    private MaterialCardView resultCard;
     private Button btnCalculate;
+    private LinearLayout listContainer;
+    private DatabaseReference databaseReference;
+    private String currentMonth;
 
     private static final String API_URL = "https://www.carboninterface.com/api/v1/estimates";
     private static final String API_KEY = "EEjDUmc5BvD0n5ibNojQ";
@@ -47,8 +62,19 @@ public class ElectricityEmission extends AppCompatActivity {
         carbonKg = findViewById(R.id.carbonKg);
         carbonMt = findViewById(R.id.carbonMt);
         estimatedAt = findViewById(R.id.estimatedAt);
+        totalEmissions = findViewById(R.id.totalEmissions);
         resultCard = findViewById(R.id.resultCard);
         btnCalculate = findViewById(R.id.btnCalculate);
+        listContainer = findViewById(R.id.listContainer);
+
+        // Get current month in "YYYY-MMMM" format (e.g., "2025-March")
+        currentMonth = new SimpleDateFormat("yyyy-MMMM", Locale.getDefault()).format(new Date());
+
+        // Initialize Firebase Database with month-specific node
+        databaseReference = FirebaseDatabase.getInstance().getReference("carbonviewcalculations/manualaddedemissions/electricalemissions/" + currentMonth);
+
+        // Load total emissions for the current month
+        loadTotalEmissions();
 
         btnCalculate.setOnClickListener(v -> {
             String input = inputElectricity.getText().toString();
@@ -120,16 +146,18 @@ public class ElectricityEmission extends AppCompatActivity {
                             if (carbonGValue >= 0 && carbonLbValue >= 0 && carbonKgValue >= 0 && carbonMtValue >= 0) {
                                 runOnUiThread(() -> {
                                     resultCard.setVisibility(View.VISIBLE);
-                                    carbonG.setText("Carbon (g): " + carbonGValue + " g CO₂");
-                                    carbonLb.setText("Carbon (lb): " + carbonLbValue + " lb CO₂");
-                                    carbonKg.setText("Carbon (kg): " + carbonKgValue + " kg CO₂");
-                                    carbonMt.setText("Carbon (mt): " + carbonMtValue + " mt CO₂");
+                                    electricityResult.setText("Electricity Emission: " + carbonKgValue + " kg CO₂");
+                                    carbonG.setText("Carbon Emission (g): " + carbonGValue);
+                                    carbonLb.setText("Carbon Emission (lb): " + carbonLbValue);
+                                    carbonKg.setText("Carbon Emission (kg): " + carbonKgValue);
+                                    carbonMt.setText("Carbon Emission (MT): " + carbonMtValue);
                                     estimatedAt.setText("Estimated At: " + estimatedDate);
+
+                                    addListItem(carbonKgValue, energyUsed);
                                 });
                             } else {
                                 showError("Invalid carbon emission data received");
                             }
-
                         } else {
                             showError("Invalid carbon emission data");
                         }
@@ -139,6 +167,68 @@ public class ElectricityEmission extends AppCompatActivity {
                 } catch (JSONException e) {
                     showError("JSON Parsing Error: " + e.getMessage());
                 }
+            }
+        });
+    }
+
+    private void addListItem(double carbonKgValue, double energyUsed) {
+        View listItem = LayoutInflater.from(this).inflate(R.layout.list1, listContainer, false);
+
+        TextView co2Text = listItem.findViewById(R.id.co2Text);
+        Button saveButton = listItem.findViewById(R.id.saveButton);
+        Button dismissButton = listItem.findViewById(R.id.dismissButton);
+
+        co2Text.setText("CO₂ Emission: " + carbonKgValue + " kg");
+
+        saveButton.setOnClickListener(v -> {
+            saveToFirebase(carbonKgValue, energyUsed);
+            listContainer.removeView(listItem);
+        });
+
+        dismissButton.setOnClickListener(v -> listContainer.removeView(listItem));
+
+        listContainer.removeAllViews();
+        listContainer.addView(listItem);
+    }
+
+    private void saveToFirebase(double carbonKgValue, double energyUsed) {
+        String entryId = databaseReference.push().getKey();
+        if (entryId != null) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("carbon_kg", carbonKgValue);
+            data.put("energy_used", energyUsed);
+            data.put("timestamp", System.currentTimeMillis());
+
+            databaseReference.child(entryId).setValue(data)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Data saved for " + currentMonth + "!", Toast.LENGTH_SHORT).show();
+                        loadTotalEmissions();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        }
+    }
+
+    private void loadTotalEmissions() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                double total = 0.0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Double carbonKg = snapshot.child("carbon_kg").getValue(Double.class);
+                    if (carbonKg != null) {
+                        total += carbonKg;
+                    }
+                }
+                double finalTotal = total;
+                runOnUiThread(() -> {
+                    totalEmissions.setVisibility(View.VISIBLE);
+                    totalEmissions.setText("Total Emissions for " + currentMonth + ": " + String.format("%.2f", finalTotal) + " kg CO₂");
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                showError("Error loading total emissions: " + databaseError.getMessage());
             }
         });
     }
