@@ -168,7 +168,7 @@ class FuelBillScan : AppCompatActivity() {
 
         // More natural CO₂ estimation between 150 - 320 kg
         val billLengthFactor = billText.length % 170 // Creates variation
-        val estimatedCO2 = 150 + (billLengthFactor * 1.0) // Ensures range is 150 - 320
+        val estimatedCO2 = 50 + (billLengthFactor * 1.0) // Ensures range is 150 - 320
 
         Log.d("DEBUG", "✅ Displaying Estimated CO₂ Emission: ~${"%.2f".format(estimatedCO2)} kg")
 
@@ -176,12 +176,6 @@ class FuelBillScan : AppCompatActivity() {
         tvResult.text = trimmedText
         tvResultEmission.text = "🌱CO₂ Emission: ~${"%.2f".format(estimatedCO2)} kg"
     }
-
-
-
-
-
-
 
 
 
