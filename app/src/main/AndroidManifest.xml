@@ -42,7 +42,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/logoapp"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CarbonView"
+        android:theme="@style/Theme.AgeWellSuper"
         tools:targetApi="31">
 
         <!-- Activities (merged and deduplicated) -->
@@ -154,6 +154,7 @@
             android:exported="false" />
         <activity
             android:name=".OurFeedbacks"
+
             android:exported="false" />
         <activity
             android:name=".ProfileActivity"

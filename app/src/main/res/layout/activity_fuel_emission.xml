@@ -37,13 +37,11 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner
-        android:id="@+id/fuelTypeSpinner"
-
+        android:id="@+id/feultypespinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:pointerIcon="arrow"
-        />
+        android:pointerIcon="arrow" />
 
     <Button
         android:id="@+id/btnCalculate"
@@ -55,6 +53,71 @@
         android:backgroundTint="@color/primary"
         android:textColor="@android:color/white"
         android:padding="12dp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:scrollbars="none"
+        android:layout_height="match_parent">
+
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+
+    <!-- Emission Factors Display -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="20dp"
+        android:padding="8dp"
+        android:background="@android:color/white"
+        android:elevation="2dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Emission Factors (kg CO₂ per liter):"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/petrolFactor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Petrol: 2.31 kg CO₂/liter"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="4dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/dieselFactor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Diesel: 2.68 kg CO₂/liter"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="4dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/gasFactor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gas: 1.96 kg CO₂/liter"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="4dp"
+            android:textAlignment="center" />
+    </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/resultCard"
@@ -113,7 +176,6 @@
                 android:textSize="16sp"
                 android:textColor="@android:color/holo_purple"
                 android:layout_marginTop="8dp"
-
                 android:textAlignment="center"/>
 
             <TextView
@@ -127,7 +189,29 @@
                 android:layout_marginTop="16dp"
                 android:textAlignment="center"/>
         </LinearLayout>
-
     </com.google.android.material.card.MaterialCardView>
+
+    <!-- Container for the list item -->
+    <LinearLayout
+        android:id="@+id/listContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp" />
+
+    <!-- TextView for total emissions -->
+    <TextView
+        android:id="@+id/totalEmissions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total Emissions for [Month]: 0.0 kg CO₂"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        android:visibility="gone" />
+</LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
