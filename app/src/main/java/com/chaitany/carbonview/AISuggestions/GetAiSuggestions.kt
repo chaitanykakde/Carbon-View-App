@@ -267,6 +267,7 @@ class GetAiSuggestions : AppCompatActivity() {
             - Compare the emissions to typical benchmarks for a small-to-medium manufacturing business (e.g., average Scope 1 emissions are around 3000 kg CO₂ per year).
             - Highlight key contributors among the devices and their impact on the overall emissions. Start this section with *Regarding devices* in bold, followed by a new line.
             - Ensure each paragraph in this section is separated by a blank line for clarity.
+            - Ensure there is a blank line between the section header and the first paragraph.
 
             **Detailed Suggestions**:
             - Provide exactly 10 specific, actionable suggestions to reduce emissions, focusing on the highest emission category and the devices with significant emissions.
@@ -281,6 +282,7 @@ class GetAiSuggestions : AppCompatActivity() {
             **Additional Insights**:
             - Provide one additional insight, such as a long-term benefit of reducing emissions (e.g., cost savings, regulatory compliance, improved brand reputation) or a trend in the manufacturing industry related to carbon reduction.
             - Ensure each paragraph in this section is separated by a blank line.
+            - Ensure there is a blank line between the section header and the first paragraph.
 
             **Resources**:
             - Provide exactly 2 article links about reducing emissions in the manufacturing industry, with a brief description (e.g., "Guide on Energy Efficiency: https://example.com").
@@ -363,9 +365,12 @@ class GetAiSuggestions : AppCompatActivity() {
                             val cleanedSuggestionsText = cleanMarkdown(suggestionsText)
                             Log.d("GetAiSuggestions", "Cleaned suggestions text: $cleanedSuggestionsText")
 
+                            // Fallback: Ensure a blank line after section headers
+                            val fixedSuggestionsText = cleanedSuggestionsText.replace(Regex("(?m)^(\\*\\*[^\\*]+\\*\\*)$\n(?=\\S)"), "$1\n\n")
+
                             // Parse the response into sections
                             val suggestionList = mutableListOf<Suggestion>()
-                            val sections = cleanedSuggestionsText.split("(?=^\\*\\*[^\\*]+\\*\\*$)".toRegex()).filter { it.isNotBlank() }
+                            val sections = fixedSuggestionsText.split("(?=^\\*\\*[^\\*]+\\*\\*$)".toRegex()).filter { it.isNotBlank() }
 
                             for (section in sections) {
                                 val lines = section.split("\n").filter { it.isNotBlank() }

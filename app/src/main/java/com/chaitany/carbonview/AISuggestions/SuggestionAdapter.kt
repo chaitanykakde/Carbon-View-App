@@ -92,11 +92,13 @@ class SuggestionAdapter(private var suggestions: List<Suggestion>) :
         val lines = text.split("\n").map { it.trim() }
 
         var isInSuggestion = false // Track if we're in the "Detailed Suggestions" section
+        var isAfterSectionHeader = false // Track if we're immediately after a section header
         var isAfterRegardingDevices = false // Track if we're after "Regarding devices"
 
         for (line in lines) {
             if (line.isBlank()) {
                 spannable.append("\n\n") // Add extra line break for blank lines
+                isAfterSectionHeader = false
                 continue
             }
 
@@ -111,6 +113,7 @@ class SuggestionAdapter(private var suggestions: List<Suggestion>) :
                 spannable.append(headerText, StyleSpan(android.graphics.Typeface.BOLD), SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE)
                 spannable.append("\n\n") // Add extra spacing after header
                 isInSuggestion = headerText.contains("Detailed Suggestions", ignoreCase = true)
+                isAfterSectionHeader = true
                 isAfterRegardingDevices = false
             } else {
                 // Parse Markdown for bold text in the line
@@ -153,8 +156,8 @@ class SuggestionAdapter(private var suggestions: List<Suggestion>) :
 
                 // Add spacing based on context
                 if (spannable.isNotEmpty()) {
-                    if (isBoldLine || isAfterRegardingDevices) {
-                        spannable.append("\n\n") // Add extra spacing after bold lines or "Regarding devices"
+                    if (isAfterSectionHeader || isBoldLine || isAfterRegardingDevices) {
+                        spannable.append("\n\n") // Add extra spacing after section headers, bold lines, or "Regarding devices"
                     } else {
                         spannable.append("\n") // Add single line break within a paragraph
                     }
@@ -167,12 +170,13 @@ class SuggestionAdapter(private var suggestions: List<Suggestion>) :
                     spannable.append("\n\n") // Add extra spacing after each suggestion
                 }
 
-                // Set flag after encountering "Regarding devices"
+                // Set flags for spacing control
                 if (line.startsWith("*Regarding devices*")) {
                     isAfterRegardingDevices = true
                 } else {
                     isAfterRegardingDevices = false
                 }
+                isAfterSectionHeader = false // Reset after the first line following a section header
             }
         }
 
