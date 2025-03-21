@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
     <!-- Core colors -->
     <color name="primary">#0D9488</color> <!-- Primary teal color -->
     <color name="primary_dark">#0D6D65</color> <!-- Darker variant for pressed/focused states -->
@@ -22,8 +22,8 @@
     <color name="my_light_on_secondary">#FFFFFF</color>
     <color name="my_background">#FFFFFF</color>
     <color name="my_surface">#FFFFFF</color>
-    <color name="bg">#E9F6EA</color> <!-- From first two files; third has #F5F5F5 -->
-    <color name="accent">#03DAC5</color> <!-- From first two files; third has #FF5722 -->
+    <color name="bg">#F5F5F5</color>
+    <color name="accent">#FF5722</color>
 
     <!-- Additional UI colors -->
     <color name="secondary">#400D9488</color>
